@@ -15,15 +15,22 @@ import Odometry.Odometer;
  * Movement control class (turnTo, travelTo, flt, localize)
  */
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
+import lejos.hardware.sensor.EV3UltrasonicSensor;
 
 public class Navigator {
 	final static int FAST = 200, SLOW = 100, ACCELERATION = 4000;
+	final static int DETECTABLE_DISTANCE = 30;
 	final static double DEG_ERR = 3.0, CM_ERR = 1.0;
 	private Odometer odometer;
 	private EV3LargeRegulatedMotor leftMotor, rightMotor;
+	private EV3UltrasonicSensor leftUsSensor, middleUsSensor, rightUsSensor;
 
-	public Navigator(Odometer odo) {
+	public Navigator(Odometer odo, EV3UltrasonicSensor leftUsSensor, EV3UltrasonicSensor middleUsSensor, EV3UltrasonicSensor rightUsSensor) {
 		this.odometer = odo;
+		this.leftUsSensor=leftUsSensor;
+		this.middleUsSensor=middleUsSensor;
+		this.rightUsSensor=rightUsSensor;
+		
 
 		EV3LargeRegulatedMotor[] motors = this.odometer.getMotors();
 		this.leftMotor = motors[0];
@@ -32,6 +39,129 @@ public class Navigator {
 		// set acceleration
 		this.leftMotor.setAcceleration(ACCELERATION);
 		this.rightMotor.setAcceleration(ACCELERATION);
+	}
+	
+	/*
+	 * Called if an object appears in front of it and navigates around it. Uses
+	 * 90 degree turns needs to take coordinates it's traveling too
+	 */
+	private void avoid() {
+		// check if left or right are free
+		boolean leftBlocked = false;
+		boolean rightBlocked = false;
+		if (isObstacle(leftUsSensor)) {
+			leftBlocked = true;
+		}
+		if (isObstacle(rightUsSensor)) {
+			rightBlocked = true;
+		}
+
+		// if one isn't free turn other way
+		if (leftBlocked & !rightBlocked) {
+			// turn right
+			turnRight();
+			travelForward();
+		} else if (rightBlocked & !leftBlocked) {
+			// turn left
+			turnLeft();
+			travelForward();
+
+		}
+
+		// if both aren't free reverse 30cm, call avoid()
+		else if (rightBlocked & leftBlocked) {
+			reverse();
+			avoid();
+		}
+
+		// if both are free chose direction which will bring robot closer to
+		// destination
+		else {
+			// will need to be changed to shortest turn in direction of
+			// destination, for now turn left
+			turnLeft();
+			travelForward();
+		}
+
+
+	}
+
+	/*
+	 * robot turns 90 degrees to the left
+	 */
+	private void turnLeft() {
+		// turning more than 90 deg, needs to be fixed
+		float deg = convertAngle(MainProgram.WHEEL_RADIUS, MainProgram.TRACK, 90);
+		System.out.println("left");
+		System.out.println(deg);
+		leftMotor.setSpeed(FAST);
+		rightMotor.setSpeed(FAST);
+		leftMotor.rotate((int) -deg, true);
+		rightMotor.rotate((int) deg, false);
+		leftMotor.stop();
+		rightMotor.stop();
+	}
+
+	/*
+	 * robot turns 90 degrees to the right
+	 */
+	private void turnRight() {
+		// turning more than 90 deg, needs to be fixed
+		float deg = convertAngle(MainProgram.WHEEL_RADIUS, MainProgram.TRACK, 90);
+		leftMotor.setSpeed(FAST);
+		rightMotor.setSpeed(FAST);
+		System.out.println("right");
+		System.out.println(deg);
+		leftMotor.forward();
+		rightMotor.backward();
+		leftMotor.rotate((int) deg, true);
+		rightMotor.rotate((int) -deg, false);
+		leftMotor.stop();
+		rightMotor.stop();
+	}
+
+	/*
+	 * robot reverses one square (30cm)
+	 */
+	private void reverse() {
+		float deg = convertDistance(MainProgram.WHEEL_RADIUS, 30);
+		leftMotor.setSpeed(FAST);
+		rightMotor.setSpeed(FAST);
+		leftMotor.rotate((int) -deg, true);
+		rightMotor.rotate((int) -deg, false);
+		leftMotor.stop();
+		rightMotor.stop();
+	}
+
+	/*
+	 * robot goes forward one square (30cm)
+	 */
+	private void travelForward() {
+		float deg = convertDistance(MainProgram.WHEEL_RADIUS, 30);
+		leftMotor.setSpeed(FAST);
+		rightMotor.setSpeed(FAST);
+		// System.out.println("forward");
+		// System.out.println(deg);
+		leftMotor.forward();
+		rightMotor.forward();
+		leftMotor.rotate((int) deg, true);
+		rightMotor.rotate((int) deg, false);
+	}
+
+	/*
+	 * checks if US sensor can detect an object in adjacent tile
+	 */
+	public boolean isObstacle(EV3UltrasonicSensor usSensor) {
+		boolean isObstacle = false;
+		float[] distance = { 0 };
+		usSensor.fetchSample(distance, 0);
+		distance[0] = distance[0] * 100;
+//		System.out.print(" d: ");
+//		System.out.println(distance[0]);
+		if (distance[0] < DETECTABLE_DISTANCE) {
+			isObstacle = true;
+		}
+		return isObstacle;
 	}
 
 	/*
@@ -131,7 +261,13 @@ public class Navigator {
 		rightMotor.rotate(convertDistance(MainProgram.WHEEL_RADIUS, distance), false);
 	}
 	
+	//converts amount of rotation based on the wheel radius
 	private static int convertDistance(double radius, double distance) {
 		return (int) ((180.0 * distance) / (Math.PI * radius));
+	}
+
+	// calculates the rotations need to get to a certain angle
+	private static int convertAngle(double radius, double width, double angle) {
+		return convertDistance(radius, Math.PI * width * angle / 360.0);
 	}
 }
