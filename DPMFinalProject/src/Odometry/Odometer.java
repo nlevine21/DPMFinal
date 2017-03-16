@@ -47,6 +47,7 @@ public class Odometer implements TimerListener {
 	private double leftRadius, rightRadius, width;
 	private double x, y, theta;
 	private double[] oldDH, dDH;
+	public enum Direction{N,E,S,W};
 	
 	// constructor
 	public Odometer (EV3LargeRegulatedMotor leftMotor, EV3LargeRegulatedMotor rightMotor, int INTERVAL, boolean autostart) {
@@ -191,4 +192,23 @@ public class Odometer implements TimerListener {
 		else
 			return d - 360.0;
 	}
+	
+	/*
+	 * returns the tile the robot is currently on, needs to be implemented
+	 */
+	public int[] getTile() {
+		//TODO implement this
+		int[] tile = {1,3};
+		return tile;
+	}
+	
+	/*
+	 * returns the current direction robot is facing: N,E,S or W
+	 */
+	public Direction getDirection() {
+		// TODO implement this
+		return null;
+	}
+
+
 }
