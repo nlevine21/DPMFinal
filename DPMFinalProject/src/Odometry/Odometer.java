@@ -192,23 +192,31 @@ public class Odometer implements TimerListener {
 		else
 			return d - 360.0;
 	}
-	
+
 	/*
-	 * returns the tile the robot is currently on, needs to be implemented
+	 * returns the tile the robot is currently on
 	 */
-	public int[] getTile() {
-		//TODO implement this
-		int[] tile = {1,3};
+	public int[] getTile() {// TODO check this
+		int xTile = (int) (x / 30) - 1;
+		int yTile = (int) (y / 30) - 1;
+		int[] tile = { 1, 3 };
 		return tile;
 	}
-	
+
 	/*
 	 * returns the current direction robot is facing: N,E,S or W
 	 */
-	public Direction getDirection() {
-		// TODO implement this
-		return null;
-	}
+	public Direction getDirection() {// TODO check this
+		if (theta > 315 | theta <= 45) {
+			return Direction.N;
+		} else if (theta > 45 | theta <= 135) {
+			return Direction.E;
+		} else if (theta > 135 | theta <= 225) {
+			return Direction.S;
+		} else {
+			return Direction.W;
+		}
 
+	}
 
 }

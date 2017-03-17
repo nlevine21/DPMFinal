@@ -23,6 +23,7 @@ public class Navigator {
 	final static int DETECTABLE_DISTANCE = 30;
 	final static double DEG_ERR = 3.0, CM_ERR = 1.0;
 	private Odometer odometer;
+	private Direction currentDirection1;
 	private EV3LargeRegulatedMotor leftMotor, rightMotor;
 	private EV3UltrasonicSensor leftUsSensor, middleUsSensor, rightUsSensor;
 	private static final double xshoot= 152.4, yshoot=45.72; // point to shoot from
@@ -287,8 +288,18 @@ public class Navigator {
 	/*
 	 * rotates robot 180 degrees
 	 */
-	private void turnAround() {
-		// TODO implement this
+	private void turnAround() {// TODO check this
+		// turning more than 180 deg, needs to be fixed
+		float deg = convertAngle(MainProgram.WHEEL_RADIUS, MainProgram.TRACK, 180);
+		leftMotor.setSpeed(FAST);
+		rightMotor.setSpeed(FAST);
+		leftMotor.forward();
+		rightMotor.backward();
+		leftMotor.rotate((int) deg, true);
+		rightMotor.rotate((int) -deg, false);
+		leftMotor.stop();
+		rightMotor.stop();
+
 	}
 
 	/*
