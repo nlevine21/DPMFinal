@@ -4,6 +4,7 @@ package Localization;
 
 import Main.MainProgram;
 import Navigation.Navigator;
+import Navigation.Navigator;
 import Odometry.Odometer;
 import lejos.hardware.Sound;
 import lejos.robotics.SampleProvider;
@@ -16,11 +17,11 @@ public class LightLocalizer {
 	
 	private final static double SENSOR_DIST = 3.5;
 		
-	public LightLocalizer(Odometer odo, SampleProvider colorSensor, float[] colorData) {
+	public LightLocalizer(Odometer odo, SampleProvider colorSensor, float[] colorData, Navigator nav) {
 		this.odo = odo;
 		this.colorSensor = colorSensor;
 		this.colorData = colorData;
-		nav = new Navigator(this.odo);  // Initialize navigation object
+		this.nav = nav;
 	}
 	
 	public void doLocalization() {

@@ -197,9 +197,9 @@ public class Odometer implements TimerListener {
 	 * returns the tile the robot is currently on
 	 */
 	public int[] getTile() {// TODO check this
-		int xTile = (int) (x / 30) - 1;
-		int yTile = (int) (y / 30) - 1;
-		int[] tile = { 1, 3 };
+		int xTile = (int) (x / 30.48) - 1;
+		int yTile = (int) (y / 30.48) - 1;
+		int[] tile = { xTile, yTile };
 		return tile;
 	}
 

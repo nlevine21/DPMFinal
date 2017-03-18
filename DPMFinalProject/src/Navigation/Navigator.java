@@ -21,7 +21,7 @@ import lejos.hardware.sensor.EV3UltrasonicSensor;
 public class Navigator {
 	final static int FAST = 200, SLOW = 100, ACCELERATION = 4000;
 	final static int DETECTABLE_DISTANCE = 30;
-	final static double DEG_ERR = 3.0, CM_ERR = 1.0;
+	final static double DEG_ERR = 3.0, CM_ERR = .5;
 	private Odometer odometer;
 	private Direction currentDirection1;
 	private EV3LargeRegulatedMotor leftMotor, rightMotor;
@@ -45,166 +45,7 @@ public class Navigator {
 	}
 	
 
-	/*void getballtopoint(int corner, int bx, int by){ // bx and by are the dispenser tile coordinates, assumed to be on wall
-	if (initialBall){ //after localization
-		if (corner==1){
-			travelTow(15.24, 15.24); //this is the travelTo method which has obstacle avoidance
-			if (bx==-1){
-				travelTow(15.24, by*30.48);
-				turnTo(0); //turn away from dispenser, assumes east is 0 degrees
-				backup(); //collect ball and return to its position
-				travelTow(15.24, yshoot); //go to shooting position
-				travelTow(xshoot, yshoot);
-				initialBall=false;
-			}
-			else if (bx==11){
-				travelTow(289.56,15.24);
-				travelTow(289.56,by*30.48);
-				turnTo(180);
-				backup();
-				travelTow(289.56, yshoot);
-				travelTow(xshoot, yshoot);
-				initialBall=false;
-			}
-			else if (by==-1){
-				travelTow(bx*30.48, 15.24);
-				turnTo(90);
-				backup();
-				travelTow(xshoot, 15.24);
-				travelTow(xshoot, yshoot);
-				initialBall=false;
-			}
-			else if (by==11){ //bad news bears
-				initialBall=false;
-			}	
-		}
-		else if (corner==2){
-			travelTow(289.56, 15.24);
-			if (bx==-1){
-				travelTow(15.24,15.24);
-				travelTow(15.24, by*30.48);
-				turnTo(0);
-				backup();
-				travelTow(15.24, yshoot);
-				travelTow(xshoot, yshoot);
-				initialBall=false;
-			}
-			else if (bx==11){
-				travelTow(289.56,by*30.48);
-				turnTo(180);
-				backup();
-				travelTow(289.56, yshoot);
-				travelTow(xshoot, yshoot);
-				initialBall=false;
-			}
-			else if (by==-1){
-				travelTow(bx*30.48, 15.24);
-				turnTo(90);
-				backup();
-				travelTow(xshoot, 15.24);
-				travelTow(xshoot, yshoot);
-				initialBall=false;
-			}
-			else if (by==11){ //bad news bears
-				initialBall=false;
-			}	
-		}
-		else if (corner==3){
-			travelTow(289.56, 289.56);
-			if (bx==-1){
-				travelTow(289.56,yshoot);
-				travelTow(15.24, yshoot);
-				travelTow(15.24, by*30.48);
-				turnTo(0);
-				backup();
-				travelTow(15.24, yshoot);
-				travelTow(xshoot, yshoot);
-				initialBall=false;
-			}
-			else if (bx==11){
-				travelTow(289.56,by*30.48);
-				turnTo(180);
-				backup();
-				travelTow(289.56, yshoot);
-				travelTow(xshoot, yshoot);
-				initialBall=false;
-			}
-			else if (by==-1){
-				travelTow(289.56, 15.24);
-				travelTow(bx*30.48, 15.24);
-				turnTo(90);
-				backup();
-				travelTow(xshoot, 15.24);
-				travelTow(xshoot, yshoot);
-				initialBall=false;
-			}
-			else if (by==11){ //bad news bears
-				initialBall=false;
-			}	
-		}
-		else if (corner==4){
-			travelTow(15.24, 289.56);
-			if (bx==-1){
-				travelTow(15.24, by*30.48);
-				turnTo(0);
-				backup();
-				travelTow(15.24, yshoot);
-				travelTow(xshoot, yshoot);
-				initialBall=false;
-			}
-			else if (bx==11){
-				travelTow(15.24, yshoot);
-				travelTow(289.56,yshoot);
-				travelTow(289.56,by*30.48);
-				turnTo(180);
-				backup();
-				travelTow(289.56, yshoot);
-				travelTow(xshoot, yshoot);
-				initialBall=false;
-			}
-			else if (by==-1){
-				travelTow(15.24, 15.24);
-				travelTow(bx*30.48, 15.24);
-				turnTo(90);
-				backup();
-				travelTow(xshoot, 15.24);
-				travelTow(xshoot, yshoot);
-				initialBall=false;
-			}
-			else if (by==11){ //bad news bears
-				initialBall=false;
-			}	
-		}
-	}
-	else{ //method called after ball has been shot
-		if (bx==-1){
-			travelTow(15.24, yshoot);
-			travelTow(15.24, by*30.48);
-			turnTo(0);
-			backup();
-			travelTow(15.24, yshoot);
-			travelTow(xshoot, yshoot);
-		}
-		else if (bx==11){
-			travelTow(289.56, yshoot);
-			travelTow(289.56, by*30.48);
-			turnTo(0);
-			backup();
-			travelTow(289.56, yshoot);
-			travelTow(xshoot, yshoot);
-		}
-		else if (by==-1){
-			travelTow(xshoot, 15.24);
-			travelTow(bx*30.48, 15.24);
-			turnTo(90);
-			backup();
-			travelTow(xshoot, 15.24);
-			travelTow(xshoot, yshoot);
-		}
-		else if (by==11){ //bad news bears
-		}	
-	}
-	}*/
+	
 	
 	/*
 	 * Called if an object appears in front of it and navigates around it. Uses
@@ -389,7 +230,7 @@ public class Navigator {
 	 * TravelTo function which takes as arguments the x and y position in cm Will travel to designated position, while
 	 * constantly updating it's heading
 	 */
-	public void travelTo(double x, double y) {
+	public void travelToMinAngle(double x, double y) {
 		double minAng;
 		while (Math.abs(x - odometer.getX()) > CM_ERR || Math.abs(y - odometer.getY()) > CM_ERR) {
 			minAng = (Math.atan2(y - odometer.getY(), x - odometer.getX())) * (180.0 / Math.PI);
@@ -405,80 +246,75 @@ public class Navigator {
 	 * travels to tile given in x and y coordinates
 	 */
 	public void travelTo(int x, int y){
-		//if x>y
+		
+		double currentX = odometer.getX();
+		double currentY = odometer.getY();
+		
+		if (!(Math.abs(x - currentX) < CM_ERR)) {
+		
+			if ((x-currentX) >= 0) {
+				turnTo(0, true);
+				while((Math.abs(x - odometer.getX()) > CM_ERR)) {
+					this.setSpeeds(FAST, FAST);
+					if (isObstacle(middleUsSensor)) {
+						avoid();
+						travelTo(x, y);
+						return;
+					}
+					
+				}
+				
+				this.setSpeeds(0,0);
+				
+	
+			}
+			else {
+				turnTo(180, true);
+				while((Math.abs(x - odometer.getX()) > CM_ERR)) {
+					this.setSpeeds(FAST, FAST);
+					if (isObstacle(middleUsSensor)) {
+						avoid();
+						travelTo(x, y);
+						return;
+					}
+				}
+				this.setSpeeds(0,0);
+	
+			}
+		}
+		
+		if (!(Math.abs(y - currentY) < CM_ERR)) {
+		
+			if ((y-currentY) >= 0) {
+				turnTo(90, true);
+				while((Math.abs(y - odometer.getY()) > CM_ERR)) {
+					this.setSpeeds(FAST, FAST);
+					if (isObstacle(middleUsSensor)) {
+						avoid();
+						travelTo(x, y);
+						return;
+					}
+				}
+				this.setSpeeds(0, 0);
+	
+			}
+			else {
+				turnTo(270, true);
+				while((Math.abs(y - odometer.getY()) > CM_ERR)) {
+					this.setSpeeds(FAST, FAST);
+					if (isObstacle(middleUsSensor)) {
+						avoid();
+						travelTo(x, y);
+						return;
+					}
+				}
+				this.setSpeeds(0, 0);
+				
+			}
+		}
 	}
 	
-	/*
-	 * works out which direction to turn robot, turns in that direction, returns
-	 * direction robot is now facing
-	 */
-	public Direction turnTo(int x, int y) {
-		// needs to work out how which direction tile is facing. Method should
-		// be added to odometer
-		Direction currentDirect = odometer.getDirection();
-
-		Direction newDirect = null;
-		// needs to work out how which tile robot is on. Method should be added
-		// to odometer
-
-		int[] currentTile = odometer.getTile();
-		int currentX = currentTile[0];
-		int currentY = currentTile[1];
-		int travelX = currentX - x;
-		int travelY = currentY - y;
-		// check if robot is further from it's x tile or y tile
-		if (Math.abs(travelX) > Math.abs(travelY)) {// turn E or W
-			if (travelX > 0) {// turn E
-				newDirect = Direction.E;
-
-			} else {// turn W
-				newDirect = Direction.W;
-
-			}
-
-		} else if (Math.abs(travelX) < Math.abs(travelY)) {// turn N or S
-			if (travelY > 0) {// turn N
-				newDirect = Direction.N;
-
-			} else {// turn S
-				newDirect = Direction.S;
-
-			}
-
-		} else {// robot is equally close to both x and y
-			if (travelX == 0) {
-				// return current orientation
-			} else {// doesn't matter arbitrarily chose to move in x direction
-				if (travelX > 0) {
-					newDirect = Direction.E;
-				} else {
-					newDirect = Direction.W;
-				}
-			}
-
-		}
-
-		// turn to new direction
-		if (newDirect == currentDirect) {
-			// all good
-		} else if ((currentDirect == Direction.E & newDirect == Direction.N)
-				| (currentDirect == Direction.N & newDirect == Direction.W)
-				| (currentDirect == Direction.W & newDirect == Direction.S)
-				| (currentDirect == Direction.S & newDirect == Direction.E)) {// turn
-																				// left
-			turnLeft();
-		} else if ((currentDirect == Direction.E & newDirect == Direction.S)
-				| (currentDirect == Direction.S & newDirect == Direction.W)
-				| (currentDirect == Direction.W & newDirect == Direction.N)
-				| (currentDirect == Direction.N & newDirect == Direction.E)) {// turn right
-			turnRight();
-		} else {
-			turnAround();
-		}
-		return newDirect;
-
-	}
-
+	
 
 
 	/*

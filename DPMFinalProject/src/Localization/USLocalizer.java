@@ -1,6 +1,7 @@
 package Localization;
 
 import Navigation.Navigator;
+import Navigation.Navigator;
 import Odometry.Odometer;
 import lejos.hardware.Sound;
 import lejos.robotics.SampleProvider;
@@ -15,11 +16,11 @@ public class USLocalizer {
 	private float[] usData;
 	public Navigator nav;
 	
-	public USLocalizer(Odometer odo,  SampleProvider usSensor, float[] usData) {
+	public USLocalizer(Odometer odo,  SampleProvider usSensor, float[] usData, Navigator nav) {
 		this.odo = odo;
 		this.usSensor = usSensor;
 		this.usData = usData;
-		nav = new Navigator(this.odo);  // Initialize navigation object
+		this.nav = nav;
 	}
 	
 	public void doLocalization() {
