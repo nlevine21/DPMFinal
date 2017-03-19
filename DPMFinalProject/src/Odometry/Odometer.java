@@ -33,10 +33,9 @@ package Odometry;
  * 
  */
 
-
-
 import lejos.utility.Timer;
 import lejos.utility.TimerListener;
+import Main.MainProgram;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 
 public class Odometer implements TimerListener {
@@ -47,43 +46,51 @@ public class Odometer implements TimerListener {
 	private double leftRadius, rightRadius, width;
 	private double x, y, theta;
 	private double[] oldDH, dDH;
-	public enum Direction{N,E,S,W};
-	
+
+	public enum Direction {
+		N, E, S, W
+	};
+
+	public Direction currentDirection;
+	public int[] TILE = { 0, 0 };
+
 	// constructor
-	public Odometer (EV3LargeRegulatedMotor leftMotor, EV3LargeRegulatedMotor rightMotor, int INTERVAL, boolean autostart) {
-		
+	public Odometer(EV3LargeRegulatedMotor leftMotor, EV3LargeRegulatedMotor rightMotor, int INTERVAL,
+			boolean autostart) {
+
 		this.leftMotor = leftMotor;
 		this.rightMotor = rightMotor;
-		
+
 		// default values, modify for your robot
-		this.rightRadius = 2.05;
-		this.leftRadius = 2.05;
-		this.width = 15.8;
-		
+		this.rightRadius = MainProgram.WHEEL_RADIUS;
+		this.leftRadius = MainProgram.WHEEL_RADIUS;
+		this.width = MainProgram.TRACK;
+
 		this.x = 0.0;
 		this.y = 0.0;
-		this.theta = 90.0;
+		this.theta = 0.0;
 		this.oldDH = new double[2];
 		this.dDH = new double[2];
 
 		if (autostart) {
-			// if the timeout interval is given as <= 0, default to 20ms timeout 
+			// if the timeout interval is given as <= 0, default to 20ms timeout
 			this.timer = new Timer((INTERVAL <= 0) ? INTERVAL : DEFAULT_TIMEOUT_PERIOD, this);
 			this.timer.start();
 		} else
 			this.timer = null;
 	}
-	
+
 	// functions to start/stop the timerlistener
 	public void stop() {
 		if (this.timer != null)
 			this.timer.stop();
 	}
+
 	public void start() {
 		if (this.timer != null)
 			this.timer.start();
 	}
-	
+
 	/*
 	 * Calculates displacement and heading as title suggests
 	 */
@@ -95,7 +102,7 @@ public class Odometer implements TimerListener {
 		data[0] = (leftTacho * leftRadius + rightTacho * rightRadius) * Math.PI / 360.0;
 		data[1] = (rightTacho * rightRadius - leftTacho * leftRadius) / width;
 	}
-	
+
 	/*
 	 * Recompute the odometer values using the displacement and heading changes
 	 */
@@ -164,14 +171,16 @@ public class Odometer implements TimerListener {
 			return new double[] { x, y, theta };
 		}
 	}
-	
+
 	// accessors to motors
-	public EV3LargeRegulatedMotor [] getMotors() {
-		return new EV3LargeRegulatedMotor[] {this.leftMotor, this.rightMotor};
+	public EV3LargeRegulatedMotor[] getMotors() {
+		return new EV3LargeRegulatedMotor[] { this.leftMotor, this.rightMotor };
 	}
+
 	public EV3LargeRegulatedMotor getLeftMotor() {
 		return this.leftMotor;
 	}
+
 	public EV3LargeRegulatedMotor getRightMotor() {
 		return this.rightMotor;
 	}
@@ -208,13 +217,13 @@ public class Odometer implements TimerListener {
 	 */
 	public Direction getDirection() {// TODO check this
 		if (theta > 315 | theta <= 45) {
-			return Direction.N;
-		} else if (theta > 45 | theta <= 135) {
 			return Direction.E;
-		} else if (theta > 135 | theta <= 225) {
-			return Direction.S;
-		} else {
+		} else if (theta > 45 & theta <= 135) {
+			return Direction.N;
+		} else if (theta > 135 & theta <= 225) {
 			return Direction.W;
+		} else {
+			return Direction.S;
 		}
 
 	}
