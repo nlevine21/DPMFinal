@@ -34,7 +34,7 @@ public class MainProgram {
 		EV3UltrasonicSensor leftUsSensor = new EV3UltrasonicSensor(LusPort);
 		EV3UltrasonicSensor middleUsSensor = new EV3UltrasonicSensor(MusPort);
 		EV3UltrasonicSensor rightUsSensor = new EV3UltrasonicSensor(RusPort);
-		EV3ColorSensor lightSensor = new EV3ColorSensor(colorPort);
+		//EV3ColorSensor lightSensor = new EV3ColorSensor(colorPort);
 
 		/*
 		 * //Setup ultrasonic sensor
@@ -61,18 +61,20 @@ public class MainProgram {
 
 		// Navigator nav = new Navigator(odo, leftUsSensor, middleUsSensor,
 		// rightUsSensor);
-		Navigator nav = new Navigator(odo, null, null, null);
+		Navigator nav = new Navigator(odo, leftUsSensor, middleUsSensor, rightUsSensor);
 
-		/*
-		 * // perform the ultrasonic localization USLocalizer usl = new
-		 * USLocalizer(odo, usValue, usData,nav); usl.doLocalization();
-		 * 
+		
+		 // perform the ultrasonic localization USLocalizer usl = new
+		  USLocalizer usl = new USLocalizer(odo, middleUsSensor, nav); 
+		  usl.doLocalization();
+		  
+		 /*
 		 * // perform the light sensor localization LightLocalizer lsl = new
 		 * LightLocalizer(odo, colorValue, colorData,nav); lsl.doLocalization();
 		 */
 
-		odoCorrect.start();
-		nav.path();
+		//odoCorrect.start();
+		nav.travelTo(150, 75);
 
 		// If a button is pressed, terminate the program
 		while (Button.waitForAnyPress() != Button.ID_ESCAPE)

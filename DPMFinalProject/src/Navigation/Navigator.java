@@ -20,13 +20,13 @@ import lejos.hardware.sensor.EV3UltrasonicSensor;
 
 public class Navigator {
 	final static int FAST = 200, SLOW = 100, ACCELERATION = 4000;
-	final static int DETECTABLE_DISTANCE = 30;
+	final static int DETECTABLE_DISTANCE = 15;
 	final static double DEG_ERR = 3.0, CM_ERR = .5;
 	private Odometer odometer;
-	private Direction currentDirection1;
+//	private Direction currentDirection1;
 	private EV3LargeRegulatedMotor leftMotor, rightMotor;
 	private EV3UltrasonicSensor leftUsSensor, middleUsSensor, rightUsSensor;
-	private static final double xshoot = 152.4, yshoot = 45.72; // point to
+//	private static final double xshoot = 152.4, yshoot = 45.72; // point to
 																// shoot from
 
 	public Navigator(Odometer odo, EV3UltrasonicSensor leftUsSensor, EV3UltrasonicSensor middleUsSensor,
@@ -271,6 +271,7 @@ public class Navigator {
 				while ((Math.abs(x - odometer.getX()) > CM_ERR)) {
 					this.setSpeeds(FAST, FAST);
 					if (isObstacle(middleUsSensor)) {
+						this.setSpeeds(0, 0);
 						avoid();
 						travelTo(x, y);
 						return;
@@ -285,6 +286,7 @@ public class Navigator {
 				while ((Math.abs(x - odometer.getX()) > CM_ERR)) {
 					this.setSpeeds(FAST, FAST);
 					if (isObstacle(middleUsSensor)) {
+						this.setSpeeds(0, 0);
 						avoid();
 						travelTo(x, y);
 						return;
@@ -302,6 +304,7 @@ public class Navigator {
 				while ((Math.abs(y - odometer.getY()) > CM_ERR)) {
 					this.setSpeeds(FAST, FAST);
 					if (isObstacle(middleUsSensor)) {
+						this.setSpeeds(0, 0);
 						avoid();
 						travelTo(x, y);
 						return;
@@ -314,6 +317,7 @@ public class Navigator {
 				while ((Math.abs(y - odometer.getY()) > CM_ERR)) {
 					this.setSpeeds(FAST, FAST);
 					if (isObstacle(middleUsSensor)) {
+						this.setSpeeds(0, 0);
 						avoid();
 						travelTo(x, y);
 						return;

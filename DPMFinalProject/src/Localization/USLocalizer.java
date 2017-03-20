@@ -4,6 +4,8 @@ import Navigation.Navigator;
 import Navigation.Navigator;
 import Odometry.Odometer;
 import lejos.hardware.Sound;
+import lejos.hardware.sensor.EV3UltrasonicSensor;
+import lejos.hardware.sensor.SensorModes;
 import lejos.robotics.SampleProvider;
 import lejos.utility.Delay;
 
@@ -12,15 +14,17 @@ public class USLocalizer {
 	
 	private static final int WALL_DIST	= 33;  // WALL_DIST is the distance needed to detect a wall
 	private Odometer odo;
-	private SampleProvider usSensor;
+	private SensorModes usSensor;
+	private SampleProvider usValue;
 	private float[] usData;
 	public Navigator nav;
 	
-	public USLocalizer(Odometer odo,  SampleProvider usSensor, float[] usData, Navigator nav) {
+	public USLocalizer(Odometer odo,  EV3UltrasonicSensor usSensor, Navigator nav) {
 		this.odo = odo;
 		this.usSensor = usSensor;
-		this.usData = usData;
 		this.nav = nav;
+		this.usValue = usSensor.getMode("Distance");			
+		this.usData = new float[usValue.sampleSize()];		
 	}
 	
 	public void doLocalization() {
