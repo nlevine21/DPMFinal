@@ -63,10 +63,11 @@ public class MainProgram {
 		// rightUsSensor);
 		Navigator nav = new Navigator(odo, leftUsSensor, middleUsSensor, rightUsSensor);
 
-		
+		/*
 		 // perform the ultrasonic localization USLocalizer usl = new
 		  USLocalizer usl = new USLocalizer(odo, middleUsSensor, nav); 
 		  usl.doLocalization();
+		  */
 		  
 		 /*
 		 * // perform the light sensor localization LightLocalizer lsl = new

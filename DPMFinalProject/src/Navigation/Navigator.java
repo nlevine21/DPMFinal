@@ -17,10 +17,11 @@ import Odometry.Odometer.Direction;
  */
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 import lejos.hardware.sensor.EV3UltrasonicSensor;
+import lejos.utility.Delay;
 
 public class Navigator {
 	final static int FAST = 200, SLOW = 100, ACCELERATION = 4000;
-	final static int DETECTABLE_DISTANCE = 15;
+	final static int DETECTABLE_DISTANCE = 25;
 	final static double DEG_ERR = 3.0, CM_ERR = .5;
 	private Odometer odometer;
 //	private Direction currentDirection1;
@@ -113,8 +114,8 @@ public class Navigator {
 		float deg = convertAngle(MainProgram.WHEEL_RADIUS, MainProgram.TRACK, 90);
 		// System.out.println("left");
 		// System.out.println(deg);
-		leftMotor.setSpeed(FAST);
-		rightMotor.setSpeed(FAST);
+		leftMotor.setSpeed(SLOW);
+		rightMotor.setSpeed(SLOW);
 		leftMotor.rotate((int) -deg, true);
 		rightMotor.rotate((int) deg, false);
 		leftMotor.stop();
@@ -127,8 +128,8 @@ public class Navigator {
 	private void turnRight() {
 		// turning more than 90 deg, needs to be fixed
 		float deg = convertAngle(MainProgram.WHEEL_RADIUS, MainProgram.TRACK, 90);
-		leftMotor.setSpeed(FAST);
-		rightMotor.setSpeed(FAST);
+		leftMotor.setSpeed(SLOW);
+		rightMotor.setSpeed(SLOW);
 		// System.out.println("right");
 		// System.out.println(deg);
 		leftMotor.forward();
@@ -139,22 +140,7 @@ public class Navigator {
 		rightMotor.stop();
 	}
 
-	/*
-	 * rotates robot 180 degrees
-	 */
-	private void turnAround() {// TODO check this
-		// turning more than 180 deg, needs to be fixed
-		float deg = convertAngle(MainProgram.WHEEL_RADIUS, MainProgram.TRACK, 180);
-		leftMotor.setSpeed(FAST);
-		rightMotor.setSpeed(FAST);
-		leftMotor.forward();
-		rightMotor.backward();
-		leftMotor.rotate((int) deg, true);
-		rightMotor.rotate((int) -deg, false);
-		leftMotor.stop();
-		rightMotor.stop();
 
-	}
 
 	/*
 	 * robot reverses one square (30cm)
@@ -268,10 +254,11 @@ public class Navigator {
 
 			if ((x - currentX) >= 0) {
 				turnTo(0, true);
+				this.setSpeeds(FAST, FAST);
 				while ((Math.abs(x - odometer.getX()) > CM_ERR)) {
-					this.setSpeeds(FAST, FAST);
 					if (isObstacle(middleUsSensor)) {
 						this.setSpeeds(0, 0);
+						delay();
 						avoid();
 						travelTo(x, y);
 						return;
@@ -283,10 +270,11 @@ public class Navigator {
 
 			} else {
 				turnTo(180, true);
+				this.setSpeeds(FAST, FAST);
 				while ((Math.abs(x - odometer.getX()) > CM_ERR)) {
-					this.setSpeeds(FAST, FAST);
 					if (isObstacle(middleUsSensor)) {
 						this.setSpeeds(0, 0);
+						delay();
 						avoid();
 						travelTo(x, y);
 						return;
@@ -301,10 +289,11 @@ public class Navigator {
 
 			if ((y - currentY) >= 0) {
 				turnTo(90, true);
+				this.setSpeeds(FAST, FAST);
 				while ((Math.abs(y - odometer.getY()) > CM_ERR)) {
-					this.setSpeeds(FAST, FAST);
 					if (isObstacle(middleUsSensor)) {
 						this.setSpeeds(0, 0);
+						delay();
 						avoid();
 						travelTo(x, y);
 						return;
@@ -314,10 +303,11 @@ public class Navigator {
 
 			} else {
 				turnTo(270, true);
+				this.setSpeeds(FAST, FAST);
 				while ((Math.abs(y - odometer.getY()) > CM_ERR)) {
-					this.setSpeeds(FAST, FAST);
 					if (isObstacle(middleUsSensor)) {
 						this.setSpeeds(0, 0);
+						delay();
 						avoid();
 						travelTo(x, y);
 						return;
@@ -376,5 +366,9 @@ public class Navigator {
 	// calculates the rotations need to get to a certain angle
 	private static int convertAngle(double radius, double width, double angle) {
 		return convertDistance(radius, Math.PI * width * angle / 360.0);
+	}
+	
+	private void delay() {
+		Delay.msDelay(1000);
 	}
 }

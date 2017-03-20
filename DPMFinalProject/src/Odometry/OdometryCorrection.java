@@ -2,12 +2,16 @@ package Odometry;
 
 import lejos.hardware.Sound;
 import lejos.hardware.sensor.EV3ColorSensor;
+import lejos.hardware.sensor.SensorModes;
+import lejos.robotics.SampleProvider;
 
 public class OdometryCorrection extends Thread {
 
 	private Odometer odometer;
 	private double TILE = 30.48;
-	private EV3ColorSensor colorSensor;
+	private SensorModes colorSensor;
+	private SampleProvider colorSample;
+	
 	// Arrays that contain the RGB values of light
 	private float[] color = { 0, 0, 0 };
 	private float[] colorsIniti = { 0, 0, 0 }; // initial colors
@@ -15,11 +19,12 @@ public class OdometryCorrection extends Thread {
 	public OdometryCorrection(Odometer odometer, EV3ColorSensor colorSensor) {
 		this.odometer = odometer;
 		this.colorSensor = colorSensor;
+		this.colorSample = this.colorSensor.getMode("Red");
 	}
 
 	public void run() {
 		initialTile();
-		colorSensor.getRGBMode().fetchSample(colorsIniti, 0);
+		colorSample.fetchSample(colorsIniti, 0);
 		while (true) {
 			if (isLine()) {
 				Sound.beep();
@@ -45,7 +50,7 @@ public class OdometryCorrection extends Thread {
 	 * returns if there is a line or not
 	 */
 	public boolean isLine() {
-		colorSensor.getRGBMode().fetchSample(color, 0);
+		colorSample.fetchSample(color, 0);
 		if (color[0] < (colorsIniti[0] - 0.05) && color[1] < colorsIniti[1] && color[2] < (colorsIniti[2] - 0.003)) {
 			return true;
 		} else {
