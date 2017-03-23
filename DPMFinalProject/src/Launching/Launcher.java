@@ -6,16 +6,14 @@ import lejos.hardware.ev3.LocalEV3;
 import lejos.hardware.lcd.TextLCD;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 
-
 public class Launcher {
 	
 	// Static Resources:
 		// Left motor connected to output A
 		// Right motor connected to output D
 		// Top Motors connected to outputs B and C
-		private static final EV3LargeRegulatedMotor topMotor = new EV3LargeRegulatedMotor(LocalEV3.get().getPort("B"));
-		private static final EV3LargeRegulatedMotor topMotor2 = new EV3LargeRegulatedMotor(LocalEV3.get().getPort("C"));
-
+		private  EV3LargeRegulatedMotor topMotor, topMotor2;
+		private int d1;
 
 		// Constants
 		private static final int ACCELERATION = 2500;	
@@ -28,9 +26,18 @@ public class Launcher {
 		private static final int FIVE_TILES = 97;
 		private static final int SIX_TILES = 180;
 		private static final int SEVEN_TILES = 240;
-		public static void main(String[] args) {
-			int d1=7; //taken from wifi class
+		
+		
+		
+		public Launcher (EV3LargeRegulatedMotor topMotor, EV3LargeRegulatedMotor topMotor2, int distance) {
+			this.topMotor = topMotor;
+			this.topMotor2 = topMotor2;
+			this.d1 = distance;
+			
+		}
 
+		public void launchBall () {
+			
 			//Rotate the motors forward to prepare for launch
 			topMotor.setSpeed(100);
 			topMotor2.setSpeed(100);
@@ -64,17 +71,14 @@ public class Launcher {
 					}
 
 			}
-
-			else if (buttonChoice == Button.ID_ESCAPE) {
-				System.exit(0);
-			}
+				
 				}
 		}
 
 
 
 		//Method which launches the ball
-		private static void launch(int tiles, int angle) {
+		private void launch(int tiles, int angle) {
 
 				//Prepare the motors for launch
 				topMotor.resetTachoCount();
@@ -132,7 +136,7 @@ public class Launcher {
 
 		}
 
-		public static void RotateMotors ( int angle){
+		public void RotateMotors ( int angle){
 			
 			topMotor.rotate(angle, true);
 			topMotor2.rotate(angle, false);
