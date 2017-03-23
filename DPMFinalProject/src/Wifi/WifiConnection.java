@@ -9,11 +9,12 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Map;
 
-import lejos.hardware.Button;
-
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 import org.json.simple.parser.ParseException;
+
+import lejos.hardware.Button;
+
 
 /**
  * Handles all aspects of communicating with a server (TA's computer) to get
