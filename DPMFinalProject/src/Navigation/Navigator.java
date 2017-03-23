@@ -89,7 +89,7 @@ public class Navigator {
 
 		}
 
-		// if both aren't free reverse 30cm, call avoid()
+		// if both aren't free reverse 30cm, then call avoid() 
 		else if (rightBlocked & leftBlocked) {
 			reverse();
 			avoid();
@@ -97,6 +97,8 @@ public class Navigator {
 
 		// if both are free chose direction which will bring robot closer to
 		// destination
+		
+		// WHAT IS THE CONDITION FOR THIS CODE. I CANT FIND ITS CLAUSE
 		else {
 			// will need to be changed to shortest turn in direction of
 			// destination, for now turn left
@@ -132,8 +134,8 @@ public class Navigator {
 		rightMotor.setSpeed(SLOW);
 		// System.out.println("right");
 		// System.out.println(deg);
-		leftMotor.forward();
-		rightMotor.backward();
+		//leftMotor.forward();   THESE 2 SHOULDNT BE HERE. THIS MIGHT BE WHY IT WAS SUDDENLY SPEEDING UP
+		//rightMotor.backward();
 		leftMotor.rotate((int) deg, true);
 		rightMotor.rotate((int) -deg, false);
 		leftMotor.stop();
@@ -147,8 +149,8 @@ public class Navigator {
 	 */
 	private void reverse() {
 		float deg = convertDistance(MainProgram.WHEEL_RADIUS, 30);
-		leftMotor.setSpeed(FAST);
-		rightMotor.setSpeed(FAST);
+		leftMotor.setSpeed(SLOW);
+		rightMotor.setSpeed(SLOW);
 		leftMotor.rotate((int) -deg, true);
 		rightMotor.rotate((int) -deg, false);
 		leftMotor.stop();
@@ -160,12 +162,12 @@ public class Navigator {
 	 */
 	private void travelForward() {
 		float deg = convertDistance(MainProgram.WHEEL_RADIUS, 30);
-		leftMotor.setSpeed(FAST);
-		rightMotor.setSpeed(FAST);
+		leftMotor.setSpeed(SLOW);
+		rightMotor.setSpeed(SLOW);
 		// System.out.println("forward");
 		// System.out.println(deg);
-		leftMotor.forward();
-		rightMotor.forward();
+		//leftMotor.forward();		SAME THING AS BEFORE. SHOULDNT BE HERE
+		//rightMotor.forward();
 		leftMotor.rotate((int) deg, true);
 		rightMotor.rotate((int) deg, false);
 	}
@@ -221,8 +223,8 @@ public class Navigator {
 	public void setFloat() {
 		this.leftMotor.stop();
 		this.rightMotor.stop();
-		this.leftMotor.flt(true);
-		this.rightMotor.flt(true);
+		this.leftMotor.flt();		//THESE WERE BOTH SET TO TRUE BEFOre
+		this.rightMotor.flt();
 	}
 
 	/*
@@ -237,9 +239,9 @@ public class Navigator {
 			if (minAng < 0)
 				minAng += 360.0;
 			this.turnTo(minAng, false);
-			this.setSpeeds(FAST, FAST);
+			this.setSpeeds(SLOW, SLOW);
 		}
-		this.setSpeeds(0, 0);
+		this.setSpeeds(0, 0);		// Why do we have this here?
 	}
 
 	/*
@@ -369,6 +371,6 @@ public class Navigator {
 	}
 	
 	private void delay() {
-		Delay.msDelay(1000);
+		Delay.msDelay(2000);
 	}
 }
