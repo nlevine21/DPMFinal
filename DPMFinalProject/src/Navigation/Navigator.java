@@ -247,7 +247,7 @@ public class Navigator {
 	/*
 	 * travels to tile given in x and y coordinates
 	 */
-	public void travelTo(int x, int y) {
+	public void travelTo(double x, double y) {
 
 		double currentX = odometer.getX();
 		double currentY = odometer.getY();
