@@ -74,7 +74,7 @@ public class MainProgram {
 		 * LightLocalizer(odo, colorValue, colorData,nav); lsl.doLocalization();
 		 */
 
-		//odoCorrect.start();
+		odoCorrect.start();
 		nav.travelTo(150, 75);
 
 		// If a button is pressed, terminate the program
