@@ -5,7 +5,7 @@ import java.util.Map;
 
 
 public class WiFiData {
-	private static final String SERVER_IP = "192.168.2.8";
+	private static final String SERVER_IP = "192.168.2.11";
 	private static final int TEAM_NUMBER = 5;
 	private static final boolean ENABLE_DEBUG_WIFI_PRINT = true;
 	private Map wifiData;

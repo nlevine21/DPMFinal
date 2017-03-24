@@ -1,4 +1,4 @@
-package Localization;
+package Odometry;
 
 import Odometry.Odometer;
 import lejos.hardware.ev3.LocalEV3;
@@ -24,6 +24,8 @@ public class LCDInfo implements TimerListener {
 
 		// start the timer
 		lcdTimer.start();
+		
+		LCD.clear();
 	}
 
 	public void timedOut() {

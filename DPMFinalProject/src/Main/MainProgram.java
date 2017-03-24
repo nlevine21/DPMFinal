@@ -1,7 +1,7 @@
 package Main;
 
 import Launching.Launcher;
-import Localization.LCDInfo;
+import Odometry.LCDInfo;
 import Localization.LightLocalizer;
 import Localization.USLocalizer;
 import Navigation.Navigator;
@@ -13,6 +13,7 @@ import lejos.hardware.ev3.LocalEV3;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 import lejos.hardware.port.Port;
 import lejos.hardware.sensor.*;
+import lejos.utility.Delay;
 
 public class MainProgram {
 
@@ -35,9 +36,11 @@ public class MainProgram {
 	private static final EV3UltrasonicSensor middleUsSensor = new EV3UltrasonicSensor(MusPort);
 	private static final EV3UltrasonicSensor rightUsSensor = new EV3UltrasonicSensor(RusPort);
 
+	private static int [] targetPosition = {5,6};
+	
 	// Constants
 	public static final double WHEEL_RADIUS = 2.1;
-	public static final double TRACK = 14.625;
+	public static final double TRACK = 15;
 	
 	public static boolean demo = true;
 
@@ -47,7 +50,8 @@ public class MainProgram {
 		if (data.offense || data.defense) {
 			Sound.beep();
 		}
-
+		
+		
 
 		
 		Odometer odo = new Odometer(leftMotor, rightMotor, 30, true);
@@ -64,31 +68,28 @@ public class MainProgram {
 		  
 		  odoCorrect.start();
 
+		  if (data.d1 == 3) {
+			  data.d1 = 4;
+		  }
 		  
 		  if (demo) {
-			  nav.travelTo(152.4, 45.72);
-			  nav.turnTo(0,true);
+			  nav.travelTo(targetPosition[0]*30.48 - 10, targetPosition[1]*30.48 - data.d1*30.48 - 0.5*30.48);
+			  odoCorrect.interrupt();
 			  
+			  nav.travelTo(152.4, 45.72);
+			  nav.turnTo(90,true);
+			  
+			 			  
 			  Launcher launch = new Launcher(topMotor, topMotor2, 4);
 			  
 			  launch.launchBall();
 		  }
-		
-
-
-		
-
-		  
-		 /*
-		 * // perform the light sensor localization LightLocalizer lsl = new
-		 * LightLocalizer(odo, colorValue, colorData,nav); lsl.doLocalization();
-		 */
-
-		//nav.travelTo(150, 75);
-
-		// If a button is pressed, terminate the program
-		while (Button.waitForAnyPress() != Button.ID_ESCAPE)
-		System.exit(0);
 	}
+		
+
+
+	
+
+
 
 }

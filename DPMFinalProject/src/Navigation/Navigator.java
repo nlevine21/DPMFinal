@@ -370,7 +370,7 @@ public class Navigator {
 		return convertDistance(radius, Math.PI * width * angle / 360.0);
 	}
 	
-	private void delay() {
+	public void delay() {
 		Delay.msDelay(2000);
 	}
 }
