@@ -35,7 +35,7 @@ package Odometry;
 
 import lejos.utility.Timer;
 import lejos.utility.TimerListener;
-import Main.MainProgram;
+import Main.BetaDemo;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 
 public class Odometer implements TimerListener {
@@ -62,9 +62,9 @@ public class Odometer implements TimerListener {
 		this.rightMotor = rightMotor;
 
 		// default values, modify for your robot
-		this.rightRadius = MainProgram.WHEEL_RADIUS;
-		this.leftRadius = MainProgram.WHEEL_RADIUS;
-		this.width = MainProgram.TRACK;
+		this.rightRadius = BetaDemo.WHEEL_RADIUS;
+		this.leftRadius = BetaDemo.WHEEL_RADIUS;
+		this.width = BetaDemo.TRACK;
 
 		this.x = 0.0;
 		this.y = 0.0;

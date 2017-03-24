@@ -1,6 +1,6 @@
 package Navigation;
 
-import Main.MainProgram;
+import Main.BetaDemo;
 import Odometry.Odometer;
 import Odometry.Odometer.Direction;
 /*
@@ -20,8 +20,10 @@ import lejos.hardware.sensor.EV3UltrasonicSensor;
 import lejos.utility.Delay;
 
 public class Navigator {
-	final static int FAST = 200, SLOW = 100, ACCELERATION = 4000;
-	final static int DETECTABLE_DISTANCE = 25;
+	public final static int FAST = 200;
+	static final int SLOW = 100;
+	static final int ACCELERATION = 4000;
+	final static int DETECTABLE_DISTANCE = 20;
 	final static double DEG_ERR = 3.0, CM_ERR = .5;
 	private Odometer odometer;
 //	private Direction currentDirection1;
@@ -55,7 +57,7 @@ public class Navigator {
 		turnLeft();
 		turnLeft();
 
-		float deg = convertDistance(MainProgram.WHEEL_RADIUS, 0);
+		float deg = convertDistance(BetaDemo.WHEEL_RADIUS, 0);
 		leftMotor.rotate((int) deg, true);
 		rightMotor.rotate((int) deg, false);
 		// turnRight();
@@ -113,7 +115,7 @@ public class Navigator {
 	 */
 	private void turnLeft() {
 		// turning more than 90 deg, needs to be fixed
-		float deg = convertAngle(MainProgram.WHEEL_RADIUS, MainProgram.TRACK, 90);
+		float deg = convertAngle(BetaDemo.WHEEL_RADIUS, BetaDemo.TRACK, 90);
 		// System.out.println("left");
 		// System.out.println(deg);
 		leftMotor.setSpeed(SLOW);
@@ -129,7 +131,7 @@ public class Navigator {
 	 */
 	private void turnRight() {
 		// turning more than 90 deg, needs to be fixed
-		float deg = convertAngle(MainProgram.WHEEL_RADIUS, MainProgram.TRACK, 90);
+		float deg = convertAngle(BetaDemo.WHEEL_RADIUS, BetaDemo.TRACK, 90);
 		leftMotor.setSpeed(SLOW);
 		rightMotor.setSpeed(SLOW);
 		// System.out.println("right");
@@ -148,7 +150,7 @@ public class Navigator {
 	 * robot reverses one square (30cm)
 	 */
 	private void reverse() {
-		float deg = convertDistance(MainProgram.WHEEL_RADIUS, 30);
+		float deg = convertDistance(BetaDemo.WHEEL_RADIUS, 30);
 		leftMotor.setSpeed(SLOW);
 		rightMotor.setSpeed(SLOW);
 		leftMotor.rotate((int) -deg, true);
@@ -161,9 +163,9 @@ public class Navigator {
 	 * robot goes forward one square (30cm)
 	 */
 	private void travelForward() {
-		float deg = convertDistance(MainProgram.WHEEL_RADIUS, 30);
-		leftMotor.setSpeed(SLOW);
-		rightMotor.setSpeed(SLOW);
+		float deg = convertDistance(BetaDemo.WHEEL_RADIUS, 30);
+		leftMotor.setSpeed(FAST);
+		rightMotor.setSpeed(FAST);
 		// System.out.println("forward");
 		// System.out.println(deg);
 		//leftMotor.forward();		SAME THING AS BEFORE. SHOULDNT BE HERE
@@ -356,8 +358,8 @@ public class Navigator {
 			this.setSpeeds(FAST, FAST);
 		}
 
-		leftMotor.rotate(convertDistance(MainProgram.WHEEL_RADIUS, distance), true);
-		rightMotor.rotate(convertDistance(MainProgram.WHEEL_RADIUS, distance), false);
+		leftMotor.rotate(convertDistance(BetaDemo.WHEEL_RADIUS, distance), true);
+		rightMotor.rotate(convertDistance(BetaDemo.WHEEL_RADIUS, distance), false);
 	}
 
 	// converts amount of rotation based on the wheel radius

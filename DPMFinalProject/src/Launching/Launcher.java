@@ -23,7 +23,7 @@ public class Launcher {
 		private static final int LAUNCH_ANGLE3 = 230;
 		private static final int INITIAL_ANGLE = 30;	
 		private static final int FOUR_TILES = 80;
-		private static final int FIVE_TILES = 97;
+		private static final int FIVE_TILES = 80;
 		private static final int SIX_TILES = 180;
 		private static final int SEVEN_TILES = 240;
 		private static final int EIGHT_TILES = 240;
@@ -48,10 +48,12 @@ public class Launcher {
 			topMotor2.rotate(150, false);
 			
 			delay();
-
 			
 			topMotor.rotate(-INITIAL_ANGLE, true);
 			topMotor2.rotate(-INITIAL_ANGLE, false);
+			
+			delay();
+
 			
 			//Lock both of the top motors to prepare for the launch
 			topMotor.stop();
@@ -107,6 +109,6 @@ public class Launcher {
 		}
 		
 		private static void delay() {
-			Delay.msDelay(5000);
+			Delay.msDelay(2000);
 		}
 }
