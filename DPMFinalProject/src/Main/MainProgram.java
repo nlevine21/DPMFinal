@@ -3,7 +3,6 @@ package Main;
 import Launching.Launcher;
 import Odometry.LCDInfo;
 import Localization.USLocalizer;
-import Localization.USLocalizer2;
 import Navigation.Navigator;
 import Odometry.Odometer;
 import Odometry.OdometryCorrection;
@@ -15,7 +14,7 @@ import lejos.hardware.port.Port;
 import lejos.hardware.sensor.*;
 import lejos.utility.Delay;
 
-public class BetaDemo {
+public class MainProgram {
 
 	// Static Resources:
 	// Left motor connected to output A
@@ -49,38 +48,38 @@ public class BetaDemo {
 
 	public static void main(String[] args) {
 		
-	
+	/*
 		WiFiData data = new WiFiData();
 		if (data.offense || data.defense) {
 			Sound.beep();
 		}
+	*/
 		
-		
-		int lineDist = data.d1;
+
 		
 		
 		
 		
 		Odometer odo = new Odometer(leftMotor, rightMotor, 30, true);
 		LCDInfo lcd = new LCDInfo(odo);
-		OdometryCorrection odoCorrect = new OdometryCorrection(odo, lightSensor);
-
 		Navigator nav = new Navigator(odo, leftUsSensor, middleUsSensor, rightUsSensor);
-		
+		OdometryCorrection odoCorrect = new OdometryCorrection(odo, lightSensor, nav);
+
+		/*
 		 // perform the ultrasonic localization
-		
 		  USLocalizer usl = new USLocalizer(odo, middleUsSensor, nav); 
 		  usl.doLocalization();
 		  Sound.beep();
-		
-		  
-		  odoCorrect.start();
-		  USLocalizer2 usl2 = new USLocalizer2(odo, nav, rightUsSensor);
-		  usl2.run();
+		*/
+	  
+		  //start odometry correction
+		odoCorrect.start();
 
-		  if (lineDist == 3) {
-			  lineDist = 4;
-		  }
+		nav.travelTo(75, 50);
+		  
+		  
+		  
+		 /* 
 		  
 		  if (demo) {
 			  
@@ -101,6 +100,7 @@ public class BetaDemo {
 			  
 			  launch.launchBall();
 		  }
+		  */
 	}
 		
 

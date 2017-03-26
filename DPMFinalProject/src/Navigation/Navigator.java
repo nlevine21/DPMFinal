@@ -1,8 +1,9 @@
 package Navigation;
 
-import Main.BetaDemo;
+import Main.MainProgram;
 import Odometry.Odometer;
 import Odometry.Odometer.Direction;
+import lejos.hardware.Sound;
 /*
 
 
@@ -29,11 +30,18 @@ public class Navigator {
 //	private Direction currentDirection1;
 	private EV3LargeRegulatedMotor leftMotor, rightMotor;
 	private EV3UltrasonicSensor leftUsSensor, middleUsSensor, rightUsSensor;
+	
+	private boolean headingCorrect;
+	private double distance1, distance2;
+	public int lineCount;
+	
 //	private static final double xshoot = 152.4, yshoot = 45.72; // point to
 																// shoot from
 
 	public Navigator(Odometer odo, EV3UltrasonicSensor leftUsSensor, EV3UltrasonicSensor middleUsSensor,
 			EV3UltrasonicSensor rightUsSensor) {
+		this.lineCount = 0;
+		
 		this.odometer = odo;
 		this.leftUsSensor = leftUsSensor;
 		this.middleUsSensor = middleUsSensor;
@@ -46,6 +54,8 @@ public class Navigator {
 		// set acceleration
 		this.leftMotor.setAcceleration(ACCELERATION);
 		this.rightMotor.setAcceleration(ACCELERATION);
+		
+		this.headingCorrect = false;
 	}
 
 	/*
@@ -57,7 +67,7 @@ public class Navigator {
 		turnLeft();
 		turnLeft();
 
-		float deg = convertDistance(BetaDemo.WHEEL_RADIUS, 0);
+		float deg = convertDistance(MainProgram.WHEEL_RADIUS, 0);
 		leftMotor.rotate((int) deg, true);
 		rightMotor.rotate((int) deg, false);
 		// turnRight();
@@ -115,7 +125,7 @@ public class Navigator {
 	 */
 	private void turnLeft() {
 		// turning more than 90 deg, needs to be fixed
-		float deg = convertAngle(BetaDemo.WHEEL_RADIUS, BetaDemo.TRACK, 90);
+		float deg = convertAngle(MainProgram.WHEEL_RADIUS, MainProgram.TRACK, 90);
 		// System.out.println("left");
 		// System.out.println(deg);
 		leftMotor.setSpeed(SLOW);
@@ -131,7 +141,7 @@ public class Navigator {
 	 */
 	private void turnRight() {
 		// turning more than 90 deg, needs to be fixed
-		float deg = convertAngle(BetaDemo.WHEEL_RADIUS, BetaDemo.TRACK, 90);
+		float deg = convertAngle(MainProgram.WHEEL_RADIUS, MainProgram.TRACK, 90);
 		leftMotor.setSpeed(SLOW);
 		rightMotor.setSpeed(SLOW);
 		// System.out.println("right");
@@ -150,7 +160,7 @@ public class Navigator {
 	 * robot reverses one square (30cm)
 	 */
 	private void reverse() {
-		float deg = convertDistance(BetaDemo.WHEEL_RADIUS, 30);
+		float deg = convertDistance(MainProgram.WHEEL_RADIUS, 30);
 		leftMotor.setSpeed(SLOW);
 		rightMotor.setSpeed(SLOW);
 		leftMotor.rotate((int) -deg, true);
@@ -163,7 +173,7 @@ public class Navigator {
 	 * robot goes forward one square (30cm)
 	 */
 	private void travelForward() {
-		float deg = convertDistance(BetaDemo.WHEEL_RADIUS, 30);
+		float deg = convertDistance(MainProgram.WHEEL_RADIUS, 30);
 		leftMotor.setSpeed(FAST);
 		rightMotor.setSpeed(FAST);
 		// System.out.println("forward");
@@ -258,8 +268,18 @@ public class Navigator {
 
 			if ((x - currentX) >= 0) {
 				turnTo(0, true);
-				this.setSpeeds(FAST, FAST);
+				this.lineCount = 0;
+				
 				while ((Math.abs(x - odometer.getX()) > CM_ERR)) {
+					
+					if (headingCorrect) {
+						headingCorrection(distance1, distance2, odometer.getDirection());
+						headingCorrect = false;
+					}
+					
+					this.setSpeeds(FAST, FAST);
+
+					
 					if (isObstacle(middleUsSensor)) {
 						this.setSpeeds(0, 0);
 						delay();
@@ -274,8 +294,18 @@ public class Navigator {
 
 			} else {
 				turnTo(180, true);
-				this.setSpeeds(FAST, FAST);
+				this.lineCount = 0;
+				
 				while ((Math.abs(x - odometer.getX()) > CM_ERR)) {
+					
+					
+					if (headingCorrect) {
+						headingCorrection(distance1, distance2, odometer.getDirection());
+						headingCorrect = false;
+					}
+					this.setSpeeds(FAST, FAST);
+
+					
 					if (isObstacle(middleUsSensor)) {
 						this.setSpeeds(0, 0);
 						delay();
@@ -293,8 +323,18 @@ public class Navigator {
 
 			if ((y - currentY) >= 0) {
 				turnTo(90, true);
-				this.setSpeeds(FAST, FAST);
+				this.lineCount = 0;
+				
 				while ((Math.abs(y - odometer.getY()) > CM_ERR)) {
+					
+					
+					if (headingCorrect) {
+						headingCorrection(distance1, distance2, odometer.getDirection());
+						headingCorrect = false;
+					}
+					this.setSpeeds(FAST, FAST);
+
+					
 					if (isObstacle(middleUsSensor)) {
 						this.setSpeeds(0, 0);
 						delay();
@@ -307,8 +347,17 @@ public class Navigator {
 
 			} else {
 				turnTo(270, true);
-				this.setSpeeds(FAST, FAST);
+				this.lineCount = 0;
+				
 				while ((Math.abs(y - odometer.getY()) > CM_ERR)) {
+
+					if (headingCorrect) {
+						headingCorrection(distance1, distance2, odometer.getDirection());
+						headingCorrect = false;
+					}
+					this.setSpeeds(FAST, FAST);
+
+					
 					if (isObstacle(middleUsSensor)) {
 						this.setSpeeds(0, 0);
 						delay();
@@ -358,8 +407,8 @@ public class Navigator {
 			this.setSpeeds(FAST, FAST);
 		}
 
-		leftMotor.rotate(convertDistance(BetaDemo.WHEEL_RADIUS, distance), true);
-		rightMotor.rotate(convertDistance(BetaDemo.WHEEL_RADIUS, distance), false);
+		leftMotor.rotate(convertDistance(MainProgram.WHEEL_RADIUS, distance), true);
+		rightMotor.rotate(convertDistance(MainProgram.WHEEL_RADIUS, distance), false);
 	}
 
 	// converts amount of rotation based on the wheel radius
@@ -375,4 +424,79 @@ public class Navigator {
 	public void delay() {
 		Delay.msDelay(2000);
 	}
+	
+	public void setHeadingCorrection(double distance1, double distance2, boolean headingCorrect) {
+		this.distance1 = distance1;
+		this.distance2 = distance2;
+		this.headingCorrect = headingCorrect;
+	}
+	
+	public void headingCorrection (double distance1, double distance2, Direction dir){
+
+		double[] position = { 0, 0, 0 };
+		boolean[] update = { false, false, false };
+		double hypothenuse = 0.0;
+		double deviationAngle = 0.0;
+		double abcisse = 0.0;
+	
+		switch(dir){
+		case E:
+			Sound.buzz();
+			abcisse = 30;
+			hypothenuse = (distance2 - distance1) + 2;
+			
+			if (hypothenuse > abcisse) {
+			deviationAngle = Math.acos(abcisse/hypothenuse)*180/Math.PI;
+			}
+			
+			position[2] = deviationAngle;
+			update[2] = true;
+			odometer.setPosition(position, update);
+			turnTo (0,true);
+			break;
+			
+		case W:
+			abcisse = 30;
+			hypothenuse = (distance2 - distance1) + 3;
+			
+			if (hypothenuse > abcisse)  {
+			deviationAngle = Math.acos(abcisse/hypothenuse)*180/Math.PI;
+			}
+			
+			position[2] = deviationAngle;
+			update[2] = true;
+			odometer.setPosition(position, update);
+			turnTo (180,true);
+			break;
+		
+		case N:
+			abcisse = 30;
+			hypothenuse = (distance2 - distance1) + 3;
+			
+			if (hypothenuse > abcisse)  {
+			deviationAngle = Math.acos(abcisse/hypothenuse)*180/Math.PI+90;
+			}
+			
+			position[2] = deviationAngle;
+			update[2] = true;
+			odometer.setPosition(position, update);
+			turnTo (90,true);
+			break;
+			
+		case S:
+			abcisse = 30;
+			hypothenuse = (distance2 - distance1) + 3;
+			
+			if (hypothenuse > abcisse)  {
+			deviationAngle = Math.acos(abcisse/hypothenuse)*180/Math.PI+90;
+			}
+			
+			position[2] = deviationAngle;
+			update[2] = true;
+			odometer.setPosition(position, update);
+			turnTo (270,true);
+			break;
+		}
+	}
+	
 }

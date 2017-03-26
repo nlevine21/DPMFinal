@@ -35,7 +35,7 @@ package Odometry;
 
 import lejos.utility.Timer;
 import lejos.utility.TimerListener;
-import Main.BetaDemo;
+import Main.MainProgram;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 
 public class Odometer implements TimerListener {
@@ -46,6 +46,8 @@ public class Odometer implements TimerListener {
 	private double leftRadius, rightRadius, width;
 	private double x, y, theta;
 	private double[] oldDH, dDH;
+	
+	public int lineCount;
 
 	public enum Direction {
 		N, E, S, W
@@ -58,19 +60,22 @@ public class Odometer implements TimerListener {
 	public Odometer(EV3LargeRegulatedMotor leftMotor, EV3LargeRegulatedMotor rightMotor, int INTERVAL,
 			boolean autostart) {
 
+		
 		this.leftMotor = leftMotor;
 		this.rightMotor = rightMotor;
 
 		// default values, modify for your robot
-		this.rightRadius = BetaDemo.WHEEL_RADIUS;
-		this.leftRadius = BetaDemo.WHEEL_RADIUS;
-		this.width = BetaDemo.TRACK;
+		this.rightRadius = MainProgram.WHEEL_RADIUS;
+		this.leftRadius = MainProgram.WHEEL_RADIUS;
+		this.width = MainProgram.TRACK;
 
 		this.x = 0.0;
 		this.y = 0.0;
 		this.theta = 0.0;
 		this.oldDH = new double[2];
 		this.dDH = new double[2];
+		
+		this.lineCount = 0;
 
 		if (autostart) {
 			// if the timeout interval is given as <= 0, default to 20ms timeout
@@ -79,6 +84,19 @@ public class Odometer implements TimerListener {
 		} else
 			this.timer = null;
 	}
+	
+	public void incrementCount() {
+		this.lineCount++;
+	}
+	
+	public int getCount() {
+		return this.lineCount;
+	}
+	
+	public void resetCount() {
+		this.lineCount = 0;
+	}
+	
 
 	// functions to start/stop the timerlistener
 	public void stop() {

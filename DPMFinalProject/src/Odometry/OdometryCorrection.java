@@ -1,5 +1,7 @@
 package Odometry;
 
+import Navigation.Navigator;
+import Odometry.Odometer.Direction;
 import lejos.hardware.Sound;
 import lejos.hardware.sensor.EV3ColorSensor;
 
@@ -11,19 +13,56 @@ public class OdometryCorrection extends Thread {
 	// Arrays that contain the RGB values of light
 	private float[] color = { 0, 0, 0 };
 	private float[] colorsIniti = { 0, 0, 0 }; // initial colors
+	
+	private double distance1, distance2;
+	private Navigator nav;
 
-	public OdometryCorrection(Odometer odometer, EV3ColorSensor colorSensor) {
+	public OdometryCorrection(Odometer odometer, EV3ColorSensor colorSensor, Navigator nav) {
 		this.odometer = odometer;
 		this.colorSensor = colorSensor;
+		this.nav = nav;
 	}
 
 	public void run() {
 		initialTile();
 		colorSensor.getRGBMode().fetchSample(colorsIniti, 0);
+		
+		
 		while (true) {
+			
 			if (isLine()) {
 				Sound.beep();
+				double xBeforeCorrection = odometer.getX();
+				double yBeforeCorrection = odometer.getY();
+				
 				updateTileAndOdometer(odometer.getDirection());
+				
+				if (nav.lineCount == 0 ) {
+					
+					if (isFacingX()) {
+						distance1 = odometer.getX();
+					}
+					else {
+						distance1 = odometer.getY();
+					}
+					
+					nav.lineCount ++;
+				}
+				
+				else if (nav.lineCount == 1) {
+					
+					if (isFacingX()) {
+						distance2 = xBeforeCorrection;
+						nav.setHeadingCorrection(distance1, distance2, true);
+					}
+					else {
+						distance2 = yBeforeCorrection;
+						nav.setHeadingCorrection(distance1, distance2, true);
+					}
+					
+					nav.lineCount++;
+				}
+				
 
 			}
 
@@ -87,6 +126,13 @@ public class OdometryCorrection extends Thread {
 			odometer.TILE[1] -= 1;
 			break;
 		}
+	}
+	
+	private boolean isFacingX(){
+		if(odometer.getDirection().equals(Direction.E) || odometer.getDirection().equals(Direction.W))
+			return true;
+		else 
+			return false;
 	}
 
 }
