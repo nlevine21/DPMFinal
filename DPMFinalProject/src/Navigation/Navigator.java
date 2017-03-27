@@ -29,23 +29,24 @@ public class Navigator {
 	private Odometer odometer;
 //	private Direction currentDirection1;
 	private EV3LargeRegulatedMotor leftMotor, rightMotor;
-	private EV3UltrasonicSensor leftUsSensor, middleUsSensor, rightUsSensor;
+	private EV3UltrasonicSensor leftUsSensor, middleUsSensor;
 	
-	private boolean headingCorrect;
-	private double distance1, distance2;
+	private boolean headingCorrect, setToSlow;
+	private double leftDistance, rightDistance;
+	
+	private final double LIGHT_SENSOR_DIST = 9.9;
+	
 	public int lineCount;
 	
 //	private static final double xshoot = 152.4, yshoot = 45.72; // point to
 																// shoot from
 
-	public Navigator(Odometer odo, EV3UltrasonicSensor leftUsSensor, EV3UltrasonicSensor middleUsSensor,
-			EV3UltrasonicSensor rightUsSensor) {
+	public Navigator(Odometer odo, EV3UltrasonicSensor leftUsSensor, EV3UltrasonicSensor middleUsSensor) {
 		this.lineCount = 0;
 		
 		this.odometer = odo;
 		this.leftUsSensor = leftUsSensor;
 		this.middleUsSensor = middleUsSensor;
-		this.rightUsSensor = rightUsSensor;
 
 		EV3LargeRegulatedMotor[] motors = this.odometer.getMotors();
 		this.leftMotor = motors[0];
@@ -79,46 +80,26 @@ public class Navigator {
 	 * 90 degree turns needs to take coordinates it's traveling too
 	 */
 	public void avoid() {
-		// check if left or right are free
+		// check if left is are free
 		boolean leftBlocked = false;
-		boolean rightBlocked = false;
+		
 		if (isObstacle(leftUsSensor)) {
 			leftBlocked = true;
 		}
-		if (isObstacle(rightUsSensor)) {
-			rightBlocked = true;
-		}
 
 		// if one isn't free turn other way
-		if (leftBlocked & !rightBlocked) {
+		if (leftBlocked) {
 			// turn right
 			turnRight();
 			travelForward();
-		} else if (rightBlocked & !leftBlocked) {
+		} else {
 			// turn left
 			turnLeft();
 			travelForward();
 
 		}
-
-		// if both aren't free reverse 30cm, then call avoid() 
-		else if (rightBlocked & leftBlocked) {
-			reverse();
-			avoid();
-		}
-
-		// if both are free chose direction which will bring robot closer to
-		// destination
-		
-		// WHAT IS THE CONDITION FOR THIS CODE. I CANT FIND ITS CLAUSE
-		else {
-			// will need to be changed to shortest turn in direction of
-			// destination, for now turn left
-			turnLeft();
-			travelForward();
-		}
-
 	}
+
 
 	/*
 	 * robot turns 90 degrees to the left
@@ -155,19 +136,6 @@ public class Navigator {
 	}
 
 
-
-	/*
-	 * robot reverses one square (30cm)
-	 */
-	private void reverse() {
-		float deg = convertDistance(MainProgram.WHEEL_RADIUS, 30);
-		leftMotor.setSpeed(SLOW);
-		rightMotor.setSpeed(SLOW);
-		leftMotor.rotate((int) -deg, true);
-		rightMotor.rotate((int) -deg, false);
-		leftMotor.stop();
-		rightMotor.stop();
-	}
 
 	/*
 	 * robot goes forward one square (30cm)
@@ -268,16 +236,20 @@ public class Navigator {
 
 			if ((x - currentX) >= 0) {
 				turnTo(0, true);
-				this.lineCount = 0;
+				//this.lineCount = 0;
 				
-				while ((Math.abs(x - odometer.getX()) > CM_ERR)) {
+				while ((x - odometer.getX()) > CM_ERR) {
 					
 					if (headingCorrect) {
-						headingCorrection(distance1, distance2, odometer.getDirection());
+						this.setSpeeds(0, 0);
+						headingCorrection(leftDistance, rightDistance);
 						headingCorrect = false;
 					}
 					
 					this.setSpeeds(FAST, FAST);
+					if (setToSlow) {
+						this.setSpeeds(50, 50);
+					}
 
 					
 					if (isObstacle(middleUsSensor)) {
@@ -289,21 +261,28 @@ public class Navigator {
 					}
 
 				}
-
+						
 				this.setSpeeds(0, 0);
+				
+
+
 
 			} else {
 				turnTo(180, true);
-				this.lineCount = 0;
+			//	this.lineCount = 0;
 				
-				while ((Math.abs(x - odometer.getX()) > CM_ERR)) {
+				while ((odometer.getX() - x) > CM_ERR) {
 					
 					
 					if (headingCorrect) {
-						headingCorrection(distance1, distance2, odometer.getDirection());
+						this.setSpeeds(0, 0);
+						headingCorrection(leftDistance, rightDistance);
 						headingCorrect = false;
 					}
 					this.setSpeeds(FAST, FAST);
+					if (setToSlow) {
+						this.setSpeeds(50, 50);
+					}
 
 					
 					if (isObstacle(middleUsSensor)) {
@@ -323,16 +302,20 @@ public class Navigator {
 
 			if ((y - currentY) >= 0) {
 				turnTo(90, true);
-				this.lineCount = 0;
+			//	this.lineCount = 0;
 				
-				while ((Math.abs(y - odometer.getY()) > CM_ERR)) {
+				while (((y - odometer.getY()) > CM_ERR)) {
 					
 					
 					if (headingCorrect) {
-						headingCorrection(distance1, distance2, odometer.getDirection());
+						this.setSpeeds(0, 0);
+						headingCorrection(leftDistance, rightDistance);
 						headingCorrect = false;
 					}
 					this.setSpeeds(FAST, FAST);
+					if (setToSlow) {
+						this.setSpeeds(50, 50);
+					}
 
 					
 					if (isObstacle(middleUsSensor)) {
@@ -347,15 +330,19 @@ public class Navigator {
 
 			} else {
 				turnTo(270, true);
-				this.lineCount = 0;
+			//	this.lineCount = 0;
 				
-				while ((Math.abs(y - odometer.getY()) > CM_ERR)) {
+				while ((odometer.getY()-y) > CM_ERR) {
 
 					if (headingCorrect) {
-						headingCorrection(distance1, distance2, odometer.getDirection());
+						this.setSpeeds(0, 0);
+						headingCorrection(leftDistance, rightDistance);
 						headingCorrect = false;
 					}
 					this.setSpeeds(FAST, FAST);
+					if (setToSlow) {
+						this.setSpeeds(50, 50);
+					}
 
 					
 					if (isObstacle(middleUsSensor)) {
@@ -425,78 +412,38 @@ public class Navigator {
 		Delay.msDelay(2000);
 	}
 	
-	public void setHeadingCorrection(double distance1, double distance2, boolean headingCorrect) {
-		this.distance1 = distance1;
-		this.distance2 = distance2;
+	public void setHeadingCorrection(double leftDistance, double rightDistance, boolean headingCorrect) {
+		this.leftDistance = leftDistance;
+		this.rightDistance = rightDistance;
 		this.headingCorrect = headingCorrect;
 	}
 	
-	public void headingCorrection (double distance1, double distance2, Direction dir){
-
-		double[] position = { 0, 0, 0 };
-		boolean[] update = { false, false, false };
-		double hypothenuse = 0.0;
-		double deviationAngle = 0.0;
-		double abcisse = 0.0;
+	public void setToSlow(boolean set) {
+		this.setToSlow = set;
+	}
 	
-		switch(dir){
-		case E:
-			Sound.buzz();
-			abcisse = 30;
-			hypothenuse = (distance2 - distance1) + 2;
-			
-			if (hypothenuse > abcisse) {
-			deviationAngle = Math.acos(abcisse/hypothenuse)*180/Math.PI;
-			}
-			
-			position[2] = deviationAngle;
-			update[2] = true;
-			odometer.setPosition(position, update);
-			turnTo (0,true);
-			break;
-			
-		case W:
-			abcisse = 30;
-			hypothenuse = (distance2 - distance1) + 3;
-			
-			if (hypothenuse > abcisse)  {
-			deviationAngle = Math.acos(abcisse/hypothenuse)*180/Math.PI;
-			}
-			
-			position[2] = deviationAngle;
-			update[2] = true;
-			odometer.setPosition(position, update);
-			turnTo (180,true);
-			break;
+	public void headingCorrection (double leftDistance, double rightDistance){
 		
-		case N:
-			abcisse = 30;
-			hypothenuse = (distance2 - distance1) + 3;
-			
-			if (hypothenuse > abcisse)  {
-			deviationAngle = Math.acos(abcisse/hypothenuse)*180/Math.PI+90;
-			}
-			
-			position[2] = deviationAngle;
-			update[2] = true;
-			odometer.setPosition(position, update);
-			turnTo (90,true);
-			break;
-			
-		case S:
-			abcisse = 30;
-			hypothenuse = (distance2 - distance1) + 3;
-			
-			if (hypothenuse > abcisse)  {
-			deviationAngle = Math.acos(abcisse/hypothenuse)*180/Math.PI+90;
-			}
-			
-			position[2] = deviationAngle;
-			update[2] = true;
-			odometer.setPosition(position, update);
-			turnTo (270,true);
-			break;
+		Sound.buzz();
+		
+		double hypotenuse = LIGHT_SENSOR_DIST; 
+		double opposite = Math.abs(leftDistance - rightDistance);
+		
+		double angle = Math.asin(opposite/hypotenuse) * 180/Math.PI;
+		int angleToRotate = convertAngle(MainProgram.WHEEL_RADIUS, MainProgram.TRACK, angle);
+		
+		if (leftDistance > rightDistance) {
+			leftMotor.setSpeed(SLOW); rightMotor.setSpeed(SLOW);
+			rightMotor.rotate(-angleToRotate, true);
+			leftMotor.rotate(angleToRotate, false);
 		}
+		else {
+			leftMotor.setSpeed(SLOW); rightMotor.setSpeed(SLOW);
+			rightMotor.rotate(angleToRotate, true);
+			leftMotor.rotate(-angleToRotate, false);
+		}
+		
+
 	}
 	
 }

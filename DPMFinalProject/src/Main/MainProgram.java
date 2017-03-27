@@ -30,11 +30,11 @@ public class MainProgram {
 	
 	private static final Port LusPort = LocalEV3.get().getPort("S1");
 	private static final Port MusPort = LocalEV3.get().getPort("S2");
-	private static final Port RusPort = LocalEV3.get().getPort("S3");
-	private static final EV3ColorSensor lightSensor = new EV3ColorSensor(LocalEV3.get().getPort("S4"));
+	private static final EV3ColorSensor leftLightSensor = new EV3ColorSensor(LocalEV3.get().getPort("S4"));
+	private static final EV3ColorSensor rightLightSensor = new EV3ColorSensor(LocalEV3.get().getPort("S3"));
 	private static final EV3UltrasonicSensor leftUsSensor = new EV3UltrasonicSensor(LusPort);
 	private static final EV3UltrasonicSensor middleUsSensor = new EV3UltrasonicSensor(MusPort);
-	private static final EV3UltrasonicSensor rightUsSensor = new EV3UltrasonicSensor(RusPort);
+
 	
 
 	private static final int [] targetPosition = {5,6};
@@ -42,7 +42,7 @@ public class MainProgram {
 	
 	// Constants
 	public static final double WHEEL_RADIUS = 2.1;
-	public static final double TRACK = 14.75;
+	public static final double TRACK = 14.7;
 	
 	public static boolean demo = true;
 
@@ -62,8 +62,8 @@ public class MainProgram {
 		
 		Odometer odo = new Odometer(leftMotor, rightMotor, 30, true);
 		LCDInfo lcd = new LCDInfo(odo);
-		Navigator nav = new Navigator(odo, leftUsSensor, middleUsSensor, rightUsSensor);
-		OdometryCorrection odoCorrect = new OdometryCorrection(odo, lightSensor, nav);
+		Navigator nav = new Navigator(odo, leftUsSensor, middleUsSensor);
+		OdometryCorrection odoCorrect = new OdometryCorrection(odo, leftLightSensor, rightLightSensor, nav);
 
 		/*
 		 // perform the ultrasonic localization
@@ -75,7 +75,7 @@ public class MainProgram {
 		  //start odometry correction
 		odoCorrect.start();
 
-		nav.travelTo(75, 50);
+		nav.travelTo(50, 50);
 		  
 		  
 		  

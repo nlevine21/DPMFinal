@@ -52,6 +52,7 @@ public class Odometer implements TimerListener {
 	public enum Direction {
 		N, E, S, W
 	};
+	
 
 	public Direction currentDirection;
 	public int[] TILE = { 0, 0 };
@@ -234,7 +235,7 @@ public class Odometer implements TimerListener {
 	 * returns the current direction robot is facing: N,E,S or W
 	 */
 	public Direction getDirection() {// TODO check this
-		if (theta > 315 | theta <= 45) {
+		if (theta > 315 || theta <= 45) {
 			return Direction.E;
 		} else if (theta > 45 & theta <= 135) {
 			return Direction.N;

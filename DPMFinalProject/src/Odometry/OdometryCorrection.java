@@ -9,61 +9,87 @@ public class OdometryCorrection extends Thread {
 
 	private Odometer odometer;
 	private double TILE = 30.48;
-	private EV3ColorSensor colorSensor;
+	private EV3ColorSensor leftColorSensor, rightColorSensor;
 	// Arrays that contain the RGB values of light
-	private float[] color = { 0, 0, 0 };
+	private float[] leftColor = { 0, 0, 0 }, rightColor = {0,0,0};
 	private float[] colorsIniti = { 0, 0, 0 }; // initial colors
 	
 	private double distance1, distance2;
 	private Navigator nav;
 
-	public OdometryCorrection(Odometer odometer, EV3ColorSensor colorSensor, Navigator nav) {
+	public OdometryCorrection(Odometer odometer, EV3ColorSensor leftColorSensor, EV3ColorSensor rightColorSensor, Navigator nav) {
 		this.odometer = odometer;
-		this.colorSensor = colorSensor;
+		this.leftColorSensor = leftColorSensor;
+		this.rightColorSensor = rightColorSensor;
 		this.nav = nav;
+		
 	}
 
 	public void run() {
 		initialTile();
-		colorSensor.getRGBMode().fetchSample(colorsIniti, 0);
-		
+		leftColorSensor.getRGBMode().fetchSample(colorsIniti, 0);
+		rightColorSensor.getRGBMode().fetchSample(colorsIniti, 0);
 		
 		while (true) {
 			
-			if (isLine()) {
-				Sound.beep();
-				double xBeforeCorrection = odometer.getX();
-				double yBeforeCorrection = odometer.getY();
-				
-				updateTileAndOdometer(odometer.getDirection());
-				
-				if (nav.lineCount == 0 ) {
-					
-					if (isFacingX()) {
-						distance1 = odometer.getX();
+			
+			double leftDistance, rightDistance;
+			
+			if (!isLineOnLeft() && !isLineOnRight()) {
+				continue;
+			}
+			
+			
+			if (isLineOnLeft() && !isLineOnRight()) {
+				if (isFacingX()) {
+					leftDistance = odometer.getX();
+					nav.setToSlow(true);
+					while (!isLineOnRight()) {
+						Sound.beep();
 					}
-					else {
-						distance1 = odometer.getY();
-					}
-					
-					nav.lineCount ++;
+					 rightDistance = odometer.getX();
 				}
-				
-				else if (nav.lineCount == 1) {
-					
-					if (isFacingX()) {
-						distance2 = xBeforeCorrection;
-						nav.setHeadingCorrection(distance1, distance2, true);
-					}
-					else {
-						distance2 = yBeforeCorrection;
-						nav.setHeadingCorrection(distance1, distance2, true);
-					}
-					
-					nav.lineCount++;
-				}
-				
+				else {
+					 leftDistance = odometer.getY();
+					 nav.setToSlow(true);
+					while (!isLineOnRight()) {
 
+					}
+					rightDistance = odometer.getY();
+				}
+				
+				nav.setHeadingCorrection(leftDistance, rightDistance, true);
+			}
+			
+			else if (!isLineOnLeft() && isLineOnRight()) {
+				
+				if(isFacingX()) {
+					rightDistance = odometer.getX();
+					nav.setToSlow(true);
+					while (!isLineOnLeft()) {
+						
+					}
+					leftDistance = odometer.getX();
+				}
+				else {
+					rightDistance = odometer.getY();
+					nav.setToSlow(true);
+					while (!isLineOnLeft()) {
+						
+					}
+					leftDistance = odometer.getY();
+				}
+				
+				nav.setHeadingCorrection(leftDistance, rightDistance, true);
+			}
+			
+			nav.setToSlow(false);
+			
+			updateTileAndOdometer(odometer.getDirection());
+			try {
+				Thread.sleep(2000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
 			}
 
 		}
@@ -81,17 +107,27 @@ public class OdometryCorrection extends Thread {
 	}
 
 	/*
-	 * returns if there is a line or not
+	 * returns if there is a line on the left or not
 	 */
-	public boolean isLine() {
-		colorSensor.getRGBMode().fetchSample(color, 0);
-		if (color[0] < (colorsIniti[0] - 0.05) && color[1] < colorsIniti[1] && color[2] < (colorsIniti[2] - 0.003)) {
+	public boolean isLineOnLeft() {
+		leftColorSensor.getRGBMode().fetchSample(leftColor, 0);
+		if (leftColor[0] < (colorsIniti[0] - 0.05) && leftColor[1] < colorsIniti[1] && leftColor[2] < (colorsIniti[2] - 0.005)) {
 			return true;
 		} else {
 			return false;
 		}
 	}
-
+	
+	public boolean isLineOnRight() {
+		rightColorSensor.getRGBMode().fetchSample(rightColor, 0);
+		if (rightColor[0] < (colorsIniti[0] - 0.05) && rightColor[1] < colorsIniti[1] && rightColor[2] < (colorsIniti[2] - 0.005)) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+		
+ 
 	/*
 	 * called when a line is sensed and updates the odometer to the correct x or
 	 * y value
@@ -126,6 +162,7 @@ public class OdometryCorrection extends Thread {
 			odometer.TILE[1] -= 1;
 			break;
 		}
+		
 	}
 	
 	private boolean isFacingX(){
