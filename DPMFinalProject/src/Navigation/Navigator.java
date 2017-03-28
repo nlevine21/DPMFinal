@@ -20,6 +20,13 @@ import lejos.hardware.motor.EV3LargeRegulatedMotor;
 import lejos.hardware.sensor.EV3UltrasonicSensor;
 import lejos.utility.Delay;
 
+/**
+ * The Navigator of the Robot
+ * 
+ * @author Noah Levine, Rowan Kennedy, Ryan Servera 
+ * @version 4.0
+ * @since 2017-03-27  	
+ */
 public class Navigator {
 	public final static int FAST = 150;
 	static final int SLOW = 100, SLOW_LINE = 50;
@@ -29,9 +36,10 @@ public class Navigator {
 	private Odometer odometer;
 //	private Direction currentDirection1;
 	private EV3LargeRegulatedMotor leftMotor, rightMotor;
-	private EV3UltrasonicSensor leftUsSensor, middleUsSensor;
+	private EV3UltrasonicSensor middleUsSensor;
 	
 	private boolean headingCorrect, setToSlow;
+	
 	private double leftDistance, rightDistance;
 	
 	private final double LIGHT_SENSOR_DIST = 9.9;
@@ -40,12 +48,19 @@ public class Navigator {
 	
 //	private static final double xshoot = 152.4, yshoot = 45.72; // point to
 																// shoot from
-
-	public Navigator(Odometer odo, EV3UltrasonicSensor leftUsSensor, EV3UltrasonicSensor middleUsSensor) {
+	/**
+	 * Constructor for the Navigation tool
+	 * 
+	 * @param odo The odometer of the Robot
+	 * @param leftUsSensor The left US sensor of the Robot
+	 * @param middleUsSensor The middle US sensor of the robot
+	 * 
+	 * @return Navigator The Navigation object	
+	 */
+	public Navigator(Odometer odo, EV3UltrasonicSensor middleUsSensor) {
 		this.lineCount = 0;
 		
 		this.odometer = odo;
-		this.leftUsSensor = leftUsSensor;
 		this.middleUsSensor = middleUsSensor;
 
 		EV3LargeRegulatedMotor[] motors = this.odometer.getMotors();
@@ -59,56 +74,57 @@ public class Navigator {
 		this.headingCorrect = false;
 	}
 
-	/*
-	 * method used to test odometry correction, not important
-	 */
-	public void path() {
-		turnLeft();
-		turnLeft();
-		turnLeft();
-		turnLeft();
 
-		float deg = convertDistance(MainProgram.WHEEL_RADIUS, 0);
-		leftMotor.rotate((int) deg, true);
-		rightMotor.rotate((int) deg, false);
-		// turnRight();
-
-	}
 
 	/*
 	 * Called if an object appears in front of it and navigates around it. Uses
 	 * 90 degree turns needs to take coordinates it's traveling too
 	 */
+	
+	/**
+	 * Avoiding method which is after an obstacle is detected by
+	 * the middle US sensor
+	 * 
+	 * 
+	 * 
+	 */
 	public void avoid() {
-		// check if left is are free
-		
-		this.headingCorrect = false;
-		boolean leftBlocked = false;
-		
-		if (isObstacle(leftUsSensor, SIDE_DETECTABLE_DISTANCE)) {
-			leftBlocked = true;
-		}
-		
-		// if one isn't free turn other way
-		if (leftBlocked) {
-			// turn right
-			delay();
-			turnRight();
-			delay();
-			travelForward();
-		} else {
-			// turn left
-			delay();
-			turnLeft();
-			delay();
-			travelForward();
 
+		
+		delay();
+		turnRight();
+		
+		
+		while (true) {
+			boolean blocked = false;
+			if (isObstacle(middleUsSensor, SIDE_DETECTABLE_DISTANCE)) {
+				blocked = true;
+			}
+			
+			if (!blocked) {
+				delay();
+				travelForward();
+				this.headingCorrect = false;
+				return;
+			}
+			else {
+				turnLeft();
+				turnLeft();
+			}
 		}
+		
+
 	}
 
 
 	/*
 	 * robot turns 90 degrees to the left
+	 */
+	/**
+	 * Turns the robot 90 degrees to the left
+	 * 
+	 * 
+	 * 
 	 */
 	private void turnLeft() {
 		// turning more than 90 deg, needs to be fixed
@@ -125,6 +141,12 @@ public class Navigator {
 
 	/*
 	 * robot turns 90 degrees to the right
+	 */
+	/**
+	 * Turns the robot 90 degrees to the right
+	 * 
+	 * 
+	 * 
 	 */
 	private void turnRight() {
 		// turning more than 90 deg, needs to be fixed
@@ -146,8 +168,16 @@ public class Navigator {
 	/*
 	 * robot goes forward one square (30cm)
 	 */
+	/**
+	 * Tells the Robot to travel 33cm forward
+	 * 
+	 * 
+	 * 
+	 */
 	private void travelForward() {
-		float deg = convertDistance(MainProgram.WHEEL_RADIUS, 33);
+		this.headingCorrect = false;
+		
+		float deg = convertDistance(MainProgram.WHEEL_RADIUS, 32);
 		leftMotor.setSpeed(FAST);
 		rightMotor.setSpeed(FAST);
 		// System.out.println("forward");
@@ -160,9 +190,15 @@ public class Navigator {
 		rightMotor.rotate((int) deg, false);
 	}
 	
-	
+	/**
+	 * Reverses the Robot 13cm. (Called to reverse to the ball
+	 * dispenser)
+	 * 
+	 * 
+	 * 
+	 */
 	public void reverseToDispenser() {
-		float deg = convertDistance(MainProgram.WHEEL_RADIUS, 13);
+		float deg = convertDistance(MainProgram.WHEEL_RADIUS, 15);
 		leftMotor.setSpeed(FAST);
 		rightMotor.setSpeed(FAST);
 		// System.out.println("forward");
@@ -177,6 +213,15 @@ public class Navigator {
 
 	/*
 	 * checks if US sensor can detect an object in adjacent tile
+	 */
+	/**
+	 *	Checks whether a US Sensor sees an obstacle
+	 * 
+	 * @param usSensor The sensor to be checked
+	 * @param distanceWall The minimum distance at which an object would be detected 
+	 * 
+	 * @return boolean Whether the sensor sees an object
+	 * 
 	 */
 	public boolean isObstacle(EV3UltrasonicSensor usSensor, int distanceWall) {
 		boolean isObstacle = false;
@@ -194,19 +239,14 @@ public class Navigator {
 	/*
 	 * Functions to set the motor speeds jointly
 	 */
-	public void setSpeeds(float lSpd, float rSpd) {
-		this.leftMotor.setSpeed(lSpd);
-		this.rightMotor.setSpeed(rSpd);
-		if (lSpd < 0)
-			this.leftMotor.backward();
-		else
-			this.leftMotor.forward();
-		if (rSpd < 0)
-			this.rightMotor.backward();
-		else
-			this.rightMotor.forward();
-	}
-
+	/**
+	 * Sets the speeds of the driving motors
+	 * 
+	 * @param lSpd The speed to set the left motor
+	 * @param rSpd The speed to set the right motor
+	 * 
+	 * 
+	 */
 	public void setSpeeds(int lSpd, int rSpd) {
 		this.leftMotor.setSpeed(lSpd);
 		this.rightMotor.setSpeed(rSpd);
@@ -223,6 +263,13 @@ public class Navigator {
 	/*
 	 * Float the two motors jointly
 	 */
+	
+	/**
+	 * Method which floats the driving motors
+	 * 
+	 * 
+	 * 
+	 */
 	public void setFloat() {
 		this.leftMotor.stop();
 		this.rightMotor.stop();
@@ -234,6 +281,14 @@ public class Navigator {
 	 * TravelTo function which takes as arguments the x and y position in cm
 	 * Will travel to designated position, while constantly updating it's
 	 * heading
+	 */
+	/**
+	 * Method which allows the robot to travel to an (x,y) 
+	 * position through the minimum angle
+	 * 
+	 * @param x The requested x coordinate (in cm)
+	 * @param y The requested y coordinate (in cm)
+	 * 
 	 */
 	public void travelToMinAngle(double x, double y) {
 		double minAng;
@@ -249,6 +304,14 @@ public class Navigator {
 
 	/*
 	 * travels to tile given in x and y coordinates
+	 */
+	/**
+	 * Method which allows the robot to travel to an (x,y) 
+	 * position by first travelling in x and then in y
+	 * 
+	 * @param x The requested x coordinate (in cm)
+	 * @param y The requested y coordinate (in cm)
+	 * 
 	 */
 	public void travelTo(double x, double y) {
 
@@ -278,6 +341,7 @@ public class Navigator {
 						this.setSpeeds(FAST, FAST);
 					}
 
+					
 					
 					if (isObstacle(middleUsSensor, FRONT_DETECTABLE_DISTANCE)) {
 						this.setSpeeds(0, 0);
@@ -410,6 +474,14 @@ public class Navigator {
 	 * TurnTo function which takes an angle and boolean as arguments The boolean
 	 * controls whether or not to stop the motors when the turn is completed
 	 */
+	
+	/**
+	 * Method which turns the Robot to face a certain heading
+	 * 
+	 * @param angle The requested angle (in degrees)
+	 * @param stop Boolean variable determining whether or not to stop the motors after turning
+	 * 
+	 */
 	public void turnTo(double angle, boolean stop) {
 
 		double error = angle - this.odometer.getAng();
@@ -434,41 +506,79 @@ public class Navigator {
 		}
 	}
 
-	public void goForward(double distance) {
-		if (distance < 0) {
-			this.setSpeeds(-FAST, -FAST);
-		} else {
-			this.setSpeeds(FAST, FAST);
-		}
 
-		leftMotor.rotate(convertDistance(MainProgram.WHEEL_RADIUS, distance), true);
-		rightMotor.rotate(convertDistance(MainProgram.WHEEL_RADIUS, distance), false);
-	}
 
 	// converts amount of rotation based on the wheel radius
+	
+	/**
+	 * Method which converts a requested distance to the angle which 
+	 * the driving motors must rotate to drive that distance
+	 * 
+	 * @param radius The wheel radius (in cm)
+	 * @param distance The requested distance (in cm)
+	 * @return int The angle which the wheels must rotate to travel the distance (in degrees)
+	 */
 	private static int convertDistance(double radius, double distance) {
 		return (int) ((180.0 * distance) / (Math.PI * radius));
 	}
 
 	// calculates the rotations need to get to a certain angle
+	/**
+	 * Method which converts a requested angle to the angle which 
+	 * the driving motors must rotate to drive that angle
+	 * 
+	 * @param radius The wheel radius (in cm)
+	 * @param width The distance between the two wheels (in cm)
+	 * @param angle The requested distance (in degrees)
+	 * @return int The angle which the wheels must rotate to travel the distance (in degrees)
+	 */
 	private static int convertAngle(double radius, double width, double angle) {
 		return convertDistance(radius, Math.PI * width * angle / 360.0);
 	}
 	
+	/**
+	 * Delay method for synchronization
+	 * 
+	 * 
+	 * 
+	 */
 	public void delay() {
 		Delay.msDelay(2000);
 	}
 	
+	/**
+	 * Setter method called by Odometry Correction to inform the navigator
+	 * that it must perform a heading correction 
+	 * 
+	 * @param leftDistance The distance sensed by the left color sensor (in cm)
+	 * @param rightDistance The distance sensed by the right color sensor (in cm)
+	 * @param headingCorrect Boolean variable representing the need for a heading correction
+	 * 
+	 * 
+	 */
 	public void setHeadingCorrection(double leftDistance, double rightDistance, boolean headingCorrect) {
 		this.leftDistance = leftDistance;
 		this.rightDistance = rightDistance;
 		this.headingCorrect = headingCorrect;
 	}
 	
+	/**
+	 * Method which sets the navigator to rotate at 50 degrees/sec
+	 * 
+	 * 
+	 * 
+	 */
 	public void setToSlow(boolean set) {
 		this.setToSlow = set;
 	}
 	
+	/**
+	 * Method which performs the heading correction
+	 * 
+	 * @param leftDistance The distance sensed by the left color sensor (in cm)
+	 * @param rightDistance The distance sensed by the right color sensor (in cm)
+	 * @return non
+	 */
 	public void headingCorrection (double leftDistance, double rightDistance){
 		
 		Sound.buzz();

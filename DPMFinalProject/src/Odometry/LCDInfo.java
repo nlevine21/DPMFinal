@@ -5,7 +5,13 @@ import lejos.hardware.ev3.LocalEV3;
 import lejos.hardware.lcd.TextLCD;
 import lejos.utility.Timer;
 import lejos.utility.TimerListener;
-
+/**
+ * Screen Display Class obtained from MyCourses
+ * 
+ * @author Unknown
+ * @version 1.0
+ * @since Unknown
+ */
 public class LCDInfo implements TimerListener {
 	public static final int LCD_REFRESH = 100;
 	private Odometer odo;

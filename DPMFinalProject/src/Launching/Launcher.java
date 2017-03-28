@@ -7,6 +7,14 @@ import lejos.hardware.lcd.TextLCD;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 import lejos.utility.Delay;
 
+/**
+ * The Launcher Arm of The Robot
+ * 
+ * @author Darius Piecaitis, Steven Cangul
+ * @version 2.0
+ * @since 2017-03-23  	
+ */
+
 public class Launcher {
 	
 	// Static Resources:
@@ -29,6 +37,15 @@ public class Launcher {
 		private static final int EIGHT_TILES = 240;
 		
 		
+		/**
+		 * Constructor of the Launcher
+		 * 
+		 * @param topMotor One of the launching arm motors
+		 * @param topMotor2 The other launching arm motor
+		 * @param distance The distance that the launcher must shoot (in Tile Units)
+		 * 			
+		 * @return Launcher The Launcher Object    	
+		 */
 		public Launcher (EV3LargeRegulatedMotor topMotor, EV3LargeRegulatedMotor topMotor2, int distance) {
 			this.topMotor = topMotor;
 			this.topMotor2 = topMotor2;
@@ -36,6 +53,12 @@ public class Launcher {
 			
 		}
 		
+		/**
+		 * This method launches the ball
+		 * 
+		 * 
+		 *     	
+		 */
 		public void launchBall() {
 			//Rotate the motors forward to prepare for launch
 
@@ -79,7 +102,16 @@ public class Launcher {
 
 	}
 		
-		//Method which launches the ball
+		
+		
+		/**
+		 * This is a helper method to launchBall which sets the acceleration
+		 * of the launch motors appropriately 
+		 * 
+		 * @param tiles The number of tiles to launch
+		 * @param angle The angle which the launch motors must rotate
+		 *     	
+		 */
 		private void launch(int tiles, int angle) {
 			
 				//Set the accelerations of the top motors
@@ -100,6 +132,13 @@ public class Launcher {
 				
 		}
 		
+		
+		/**
+		 * This method delays the thread by 2 seconds for synchronization
+		 * 
+		 * 
+		 *     	
+		 */
 		private static void delay() {
 			Delay.msDelay(2000);
 		}

@@ -39,6 +39,13 @@ import Main.MainProgram;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 
 public class Odometer implements TimerListener {
+	/**
+	 * Odometer obtained from myCourses with some small changes
+	 * 
+	 * @author Unknown, Rowan Kennedy 
+	 * @version 1.0
+	 * @since Unknown
+	 */
 
 	private Timer timer;
 	private EV3LargeRegulatedMotor leftMotor, rightMotor;
@@ -48,7 +55,15 @@ public class Odometer implements TimerListener {
 	private double[] oldDH, dDH;
 	
 	public int lineCount;
-
+	
+	/**
+	 * Enum representing the Direction of the Robot (N,E,S,W)
+	 * 
+	 * @author Rowan Kennedy 
+	 * @version 1.0
+	 * @since 2017-03-15
+	 */
+	
 	public enum Direction {
 		N, E, S, W
 	};
@@ -76,7 +91,6 @@ public class Odometer implements TimerListener {
 		this.oldDH = new double[2];
 		this.dDH = new double[2];
 		
-		this.lineCount = 0;
 
 		if (autostart) {
 			// if the timeout interval is given as <= 0, default to 20ms timeout
@@ -84,18 +98,6 @@ public class Odometer implements TimerListener {
 			this.timer.start();
 		} else
 			this.timer = null;
-	}
-	
-	public void incrementCount() {
-		this.lineCount++;
-	}
-	
-	public int getCount() {
-		return this.lineCount;
-	}
-	
-	public void resetCount() {
-		this.lineCount = 0;
 	}
 	
 
@@ -221,18 +223,15 @@ public class Odometer implements TimerListener {
 			return d - 360.0;
 	}
 
-	/*
-	 * returns the tile the robot is currently on
-	 */
-	public int[] getTile() {// TODO check this
-		int xTile = (int) (x / 30.48) - 1;
-		int yTile = (int) (y / 30.48) - 1;
-		int[] tile = { xTile, yTile };
-		return tile;
-	}
 
 	/*
 	 * returns the current direction robot is facing: N,E,S or W
+	 */
+	/**
+	 * Method which returns the direction of the odometer
+	 * 
+	 *
+	 *
 	 */
 	public Direction getDirection() {// TODO check this
 		if (theta > 315 || theta <= 45) {

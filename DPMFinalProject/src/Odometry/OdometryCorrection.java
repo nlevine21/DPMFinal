@@ -6,6 +6,13 @@ import lejos.hardware.Sound;
 import lejos.hardware.sensor.EV3ColorSensor;
 
 public class OdometryCorrection extends Thread {
+	/**
+	 * Odometry Correction
+	 * 
+	 * @author Noah Levine, Ryan Servera, Rowan Kennedy 
+	 * @version 4.0
+	 * @since 2017-03-27
+	 */
 
 	private Odometer odometer;
 	private double TILE = 30.48;
@@ -18,8 +25,21 @@ public class OdometryCorrection extends Thread {
 	
 	private Navigator nav;
 	
-	public boolean interrupted = false, die = false;
+	private static final int COUNT = 8;
+	
 
+	/**
+	 * Constructor for OdometryCorrection
+	 * 
+	 * @param odometer The odometer 
+	 * @param leftColorSensor The left color sensor
+	 * @param rightColorSensor The right color sensor
+	 * @param nav The navigator
+	 * 
+	 * @return OdometryCorrection The OdometryCorrection thread
+	 * 
+	 * 
+	 */
 	public OdometryCorrection(Odometer odometer, EV3ColorSensor leftColorSensor, EV3ColorSensor rightColorSensor, Navigator nav) {
 		this.odometer = odometer;
 		this.leftColorSensor = leftColorSensor;
@@ -28,8 +48,16 @@ public class OdometryCorrection extends Thread {
 		
 	}
 
+	/**
+	 * Run method for the thread
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 */
 	public void run() {
-		initialTile();
+		initialTile(0);
 		leftColorSensor.getRGBMode().fetchSample(leftColorsIniti, 0);
 		rightColorSensor.getRGBMode().fetchSample(rightColorsIniti, 0);
 		
@@ -38,7 +66,7 @@ public class OdometryCorrection extends Thread {
 		
 		while (true) {
 			
-			if (Math.abs(odometer.getX() - lastX) > 33) {
+			if (Math.abs(odometer.getX() - lastX) >= 32) {
 				
 				updateTileAndOdometer(odometer.getDirection());
 				lastX = odometer.getX();
@@ -46,7 +74,7 @@ public class OdometryCorrection extends Thread {
 
 			}
 			
-			if (Math.abs(odometer.getY() - lastY) > 33) {
+			if (Math.abs(odometer.getY() - lastY) >= 32) {
 				updateTileAndOdometer(odometer.getDirection());
 				lastY = odometer.getY();
 				continue;
@@ -79,7 +107,7 @@ public class OdometryCorrection extends Thread {
 					nav.setToSlow(true);
 					
 					count = 0;
-					while (!isLineOnRight() && count < 8) {
+					while (!isLineOnRight() && count < COUNT) {
 						count++;
 						Sound.beep();
 					}
@@ -90,7 +118,7 @@ public class OdometryCorrection extends Thread {
 					 nav.setToSlow(true);
 					 
 					count = 0;
-					while (!isLineOnRight() && count < 8) {
+					while (!isLineOnRight() && count < COUNT) {
 						Sound.beep();
 						count++;
 
@@ -98,7 +126,7 @@ public class OdometryCorrection extends Thread {
 					rightDistance = odometer.getY();
 				}
 				
-				if (count < 8) {
+				if (count < COUNT) {
 					nav.setHeadingCorrection(leftDistance, rightDistance, true);
 					updateTileAndOdometer(odometer.getDirection());
 					lastX = odometer.getX();
@@ -116,7 +144,7 @@ public class OdometryCorrection extends Thread {
 					nav.setToSlow(true);
 					
 					count = 0;
-					while (!isLineOnLeft() && count < 8) {
+					while (!isLineOnLeft() && count < COUNT) {
 						Sound.beepSequenceUp();
 						count++;
 						
@@ -128,7 +156,7 @@ public class OdometryCorrection extends Thread {
 					nav.setToSlow(true);
 					
 					count = 0;
-					while (!isLineOnLeft() && count < 8) {
+					while (!isLineOnLeft() && count < COUNT) {
 						Sound.beepSequenceUp();
 						count++;
 						
@@ -136,7 +164,7 @@ public class OdometryCorrection extends Thread {
 					leftDistance = odometer.getY();
 				}
 				
-					if (count < 8) {
+					if (count < COUNT) {
 						nav.setHeadingCorrection(leftDistance, rightDistance, true);
 						updateTileAndOdometer(odometer.getDirection());
 						lastX = odometer.getX();
@@ -163,7 +191,15 @@ public class OdometryCorrection extends Thread {
 	/*
 	 * returns the tile the robot starts in
 	 */
-	private void initialTile() {
+	/**
+	 * Method which sets the initial tile of the robot
+	 * 
+	 * @param corner The starting corner of the robot
+	 * 
+	 * 
+	 * 
+	 */
+	private void initialTile(int corner) {
 		// TODO fix this to get info from wifi
 		odometer.TILE[0] = 0;
 		odometer.TILE[1] = 0;
@@ -172,6 +208,12 @@ public class OdometryCorrection extends Thread {
 
 	/*
 	 * returns if there is a line on the left or not
+	 */
+	/**
+	 * Method which returns whether the left color sensor senses a line
+	 * 
+	 * 
+	 * @return boolean Whether a line was sensed
 	 */
 	public boolean isLineOnLeft() {
 		leftColorSensor.getRGBMode().fetchSample(leftColor, 0);
@@ -182,9 +224,15 @@ public class OdometryCorrection extends Thread {
 		}
 	}
 	
+	/**
+	 * Method which returns whether the right color sensor senses a line
+	 * 
+	 * 
+	 * @return boolean Whether a line was sensed
+	 */
 	public boolean isLineOnRight() {
 		rightColorSensor.getRGBMode().fetchSample(rightColor, 0);
-		if (rightColor[0] < (rightColorsIniti[0] - 0.05) && rightColor[1] < rightColorsIniti[1] && rightColor[2] < (rightColorsIniti[2] - 0.003)) {
+		if (rightColor[0] < (rightColorsIniti[0] - 0.07) && rightColor[1] < rightColorsIniti[1] && rightColor[2] < (rightColorsIniti[2] - 0.004)) {
 			return true;
 		} else {
 			return false;
@@ -196,7 +244,14 @@ public class OdometryCorrection extends Thread {
 	 * called when a line is sensed and updates the odometer to the correct x or
 	 * y value
 	 */
+	/**
+	 * Method which updates the odometer for correction purposes
+	 * 
+	 * @param dir The direction which the robot is heading
+	 * 
+	 */
 	public void updateTileAndOdometer(Odometer.Direction dir) {
+		
 		Sound.beepSequence();
 		double[] position = { 0, 0, 0 };
 		boolean[] update = { false, false, false };
@@ -239,6 +294,12 @@ public class OdometryCorrection extends Thread {
 		
 	}
 	
+	/**
+	 * Method which returns whether the robot is traveling in the X direction
+	 * 
+	 * 
+	 * @return boolean Whether the robot is traveling in X direction
+	 */
 	private boolean isFacingX(){
 		if(odometer.getDirection().equals(Direction.E) || odometer.getDirection().equals(Direction.W))
 			return true;

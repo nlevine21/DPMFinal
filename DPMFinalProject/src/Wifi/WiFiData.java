@@ -5,6 +5,13 @@ import java.util.Map;
 
 
 public class WiFiData {
+	/**
+	 * The WiFi Data Class
+	 * 
+	 * @author Noah Levine
+	 * @version 1.0
+	 * @since 2017-03-24  	
+	 */
 	private static final String SERVER_IP = "192.168.2.3";
 	private static final int TEAM_NUMBER = 5;
 	private static final boolean ENABLE_DEBUG_WIFI_PRINT = true;
@@ -22,7 +29,9 @@ public class WiFiData {
 	
 	public String orientation;
 	
-	
+	/**
+	 * Constructor for the WiFiData	
+	 */
 	public WiFiData() {
 		WifiConnection conn = new WifiConnection(SERVER_IP, TEAM_NUMBER, ENABLE_DEBUG_WIFI_PRINT);
 		try {

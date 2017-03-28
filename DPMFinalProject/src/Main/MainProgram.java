@@ -14,6 +14,13 @@ import lejos.hardware.port.Port;
 import lejos.hardware.sensor.*;
 import lejos.utility.Delay;
 
+/**
+ * The Main Thread Program of the Robot
+ * 
+ * @author Noah Levine
+ * @version 4.0
+ * @since 2017-03-27  	
+ */
 public class MainProgram {
 
 	// Static Resources:
@@ -32,7 +39,7 @@ public class MainProgram {
 	private static final Port MusPort = LocalEV3.get().getPort("S2");
 	private static final EV3ColorSensor leftLightSensor = new EV3ColorSensor(LocalEV3.get().getPort("S4"));
 	private static final EV3ColorSensor rightLightSensor = new EV3ColorSensor(LocalEV3.get().getPort("S3"));
-	private static final EV3UltrasonicSensor leftUsSensor = new EV3UltrasonicSensor(LusPort);
+	//private static final EV3UltrasonicSensor leftUsSensor = new EV3UltrasonicSensor(LusPort);
 	private static final EV3UltrasonicSensor middleUsSensor = new EV3UltrasonicSensor(MusPort);
 
 	
@@ -46,6 +53,14 @@ public class MainProgram {
 	
 	public static boolean demo = true;
 
+	
+	/**
+	 * Main Thread Method. Manages the sequence of events
+	 * 
+	 * @param args Unused
+	 * 
+	 *    	
+	 */
 	public static void main(String[] args) {
 		
 	/*
@@ -62,7 +77,7 @@ public class MainProgram {
 		
 		Odometer odo = new Odometer(leftMotor, rightMotor, 30, true);
 		LCDInfo lcd = new LCDInfo(odo);
-		Navigator nav = new Navigator(odo, leftUsSensor, middleUsSensor);
+		Navigator nav = new Navigator(odo, middleUsSensor);
 		OdometryCorrection odoCorrect = new OdometryCorrection(odo, leftLightSensor, rightLightSensor, nav);
 
 	
@@ -75,10 +90,12 @@ public class MainProgram {
 		
 		odoCorrect.start();
 		topMotor.stop(); topMotor2.stop();
+		
 		nav.delay();
-		nav.travelTo(162, 20.5);
-		nav.travelTo(162, 31);
-		nav.turnTo(175, true);
+		nav.travelTo(40, 40);
+		nav.travelTo(61, 40);
+		nav.travelTo(61, 31+7);
+		nav.turnTo(262, true);
 		
 		topMotor.setAcceleration(100); 
 		topMotor2.setAcceleration(100);
@@ -86,7 +103,9 @@ public class MainProgram {
 		topMotor.setSpeed(100);
 		topMotor2.setSpeed(100);
 		
-		topMotor.rotate(140, true); topMotor2.rotate(140, false);
+		topMotor.rotate(155, true); topMotor2.rotate(155, false);
+		
+
 		nav.reverseToDispenser();
 
 		nav.setSpeeds(0, 0);
@@ -126,6 +145,14 @@ public class MainProgram {
 		  */
 	}
 	
+	/**
+	 * This method makes the robot travel to the dispenser
+	 * 
+	 * @param bx The X coordinate of the dispenser (in Tile Units)
+	 * @param by The Y coordinate of the dispenser (in Tile Units)
+	 * 			
+	 *     	
+	 */
 	private void goToDispenser(int bx, int by) {
 		
 	}
