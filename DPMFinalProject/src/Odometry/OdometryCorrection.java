@@ -279,53 +279,49 @@ public class OdometryCorrection extends Thread {
 		boolean[] update = { false, false, false };
 		switch (dir) {
 		case E:
-			position[0] = (odometer.TILE[0] * TILE) - SENSOR_DIST;
 			
 			if (!missedTile) {
+				position[0] = (odometer.TILE[0] * TILE) - SENSOR_DIST;
 				update[0] = true;
+				position[2] = 0;
+				update[2] = true;
+				odometer.setPosition(position, update);
 			}
 			
-			position[2] = 0;
-			update[2] = true;
-			odometer.setPosition(position, update);
 			odometer.TILE[0] += 1;
 			
 
 			break;
 		case W:
-			position[0] = ((odometer.TILE[0] - 1) * TILE) + SENSOR_DIST;
-			
 			if (!missedTile) {
+				position[0] = ((odometer.TILE[0] - 1) * TILE) + SENSOR_DIST;
 				update[0] = true;
+				position[2] = 180;
+				update[2] = true;
+				odometer.setPosition(position, update);
 			}
 			
-			position[2] = 180;
-			update[2] = true;
-			odometer.setPosition(position, update);
 			odometer.TILE[0] -= 1;
 			break;
 		case N:
-			position[1] = ((odometer.TILE[1]) * TILE) - SENSOR_DIST;
-			
-			if (!missedTile) {
-				update[1] = true;
+			if(! missedTile) {
+				position[1] = ((odometer.TILE[1]) * TILE) - SENSOR_DIST;
+				update[1] = true;			
+				position[2] = 90;
+				update[2] = true;
+				odometer.setPosition(position, update);
 			}
-			
-			position[2] = 90;
-			update[2] = true;
-			odometer.setPosition(position, update);
 			odometer.TILE[1] += 1;
 			break;
 		case S:
-			position[1] = ((odometer.TILE[1] - 1) * TILE) + SENSOR_DIST;
-			
 			if (!missedTile) {
+				position[1] = ((odometer.TILE[1] - 1) * TILE) + SENSOR_DIST;
 				update[1] = true;
+				position[2] = 270;
+				update[2] = true;
+				odometer.setPosition(position, update);
 			}
 			
-			position[2] = 270;
-			update[2] = true;
-			odometer.setPosition(position, update);
 			odometer.TILE[1] -= 1;
 			break;
 		}
