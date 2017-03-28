@@ -24,6 +24,8 @@ public class OdometryCorrection extends Thread {
 	private final double SENSOR_DIST = 5.2;
 	
 	private Navigator nav;
+	private int initialTileX, initialTileY;
+	
 	
 	private static final int COUNT = 8;
 	
@@ -40,11 +42,29 @@ public class OdometryCorrection extends Thread {
 	 * 
 	 * 
 	 */
-	public OdometryCorrection(Odometer odometer, EV3ColorSensor leftColorSensor, EV3ColorSensor rightColorSensor, Navigator nav) {
+	public OdometryCorrection(Odometer odometer, EV3ColorSensor leftColorSensor, EV3ColorSensor rightColorSensor, Navigator nav, int corner) {
 		this.odometer = odometer;
 		this.leftColorSensor = leftColorSensor;
 		this.rightColorSensor = rightColorSensor;
 		this.nav = nav;
+		
+		if (corner == 1) {
+			this.initialTileX = 0;
+			this.initialTileY = 0;
+		}
+		else if (corner == 2) {
+			this.initialTileX = 0;
+			this.initialTileY = 11;
+		}
+		else if (corner == 3) {
+			this.initialTileX = 11;
+			this.initialTileY = 11;
+		}
+		else if (corner == 4) {
+			this.initialTileX = 11;
+			this.initialTileY = 0;
+		}
+		
 		
 	}
 
@@ -57,7 +77,8 @@ public class OdometryCorrection extends Thread {
 	 * 
 	 */
 	public void run() {
-		initialTile(0);
+		
+		initializeTile();
 		leftColorSensor.getRGBMode().fetchSample(leftColorsIniti, 0);
 		rightColorSensor.getRGBMode().fetchSample(rightColorsIniti, 0);
 		
@@ -80,13 +101,13 @@ public class OdometryCorrection extends Thread {
 				continue;
 			}
 			
-			if (odometer.TILE[0] == 0 && Math.abs(odometer.getX() - lastX) > 15) {
+			if (odometer.TILE[0] == initialTileX && Math.abs(odometer.getX() - lastX) > 15) {
 				updateTileAndOdometer(odometer.getDirection(), true);
 				lastX = odometer.getX();
 				continue;
 			}
 			
-			if (odometer.TILE[1] == 0 && Math.abs(odometer.getY() - lastY) > 15) {
+			if (odometer.TILE[1] == initialTileY && Math.abs(odometer.getY() - lastY) > 15) {
 				updateTileAndOdometer(odometer.getDirection(), true);
 				lastY = odometer.getY();
 				continue;
@@ -199,10 +220,11 @@ public class OdometryCorrection extends Thread {
 	 * 
 	 * 
 	 */
-	private void initialTile(int corner) {
+	private void initializeTile() {
 		// TODO fix this to get info from wifi
-		odometer.TILE[0] = 0;
-		odometer.TILE[1] = 0;
+		odometer.TILE[0] = initialTileX;
+		odometer.TILE[1] = initialTileY;
+		
 
 	}
 

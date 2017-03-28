@@ -81,7 +81,9 @@ public class MainProgram {
 		Odometer odo = new Odometer(leftMotor, rightMotor, 30, true);
 		LCDInfo lcd = new LCDInfo(odo);
 		Navigator nav = new Navigator(odo, middleUsSensor);
-		OdometryCorrection odoCorrect = new OdometryCorrection(odo, leftLightSensor, rightLightSensor, nav);
+		
+		int corner = 0;
+		OdometryCorrection odoCorrect = new OdometryCorrection(odo, leftLightSensor, rightLightSensor, nav, corner);
 
 	
 		 // perform the ultrasonic localization
