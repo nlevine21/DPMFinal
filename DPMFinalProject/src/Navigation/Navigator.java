@@ -21,10 +21,10 @@ import lejos.hardware.sensor.EV3UltrasonicSensor;
 import lejos.utility.Delay;
 
 public class Navigator {
-	public final static int FAST = 200;
-	static final int SLOW = 100;
+	public final static int FAST = 150;
+	static final int SLOW = 100, SLOW_LINE = 50;
 	static final int ACCELERATION = 4000;
-	final static int DETECTABLE_DISTANCE = 20;
+	final static int FRONT_DETECTABLE_DISTANCE = 20, SIDE_DETECTABLE_DISTANCE = 40;
 	final static double DEG_ERR = 3.0, CM_ERR = .5;
 	private Odometer odometer;
 //	private Direction currentDirection1;
@@ -81,20 +81,26 @@ public class Navigator {
 	 */
 	public void avoid() {
 		// check if left is are free
+		
+		this.headingCorrect = false;
 		boolean leftBlocked = false;
 		
-		if (isObstacle(leftUsSensor)) {
+		if (isObstacle(leftUsSensor, SIDE_DETECTABLE_DISTANCE)) {
 			leftBlocked = true;
 		}
-
+		
 		// if one isn't free turn other way
 		if (leftBlocked) {
 			// turn right
+			delay();
 			turnRight();
+			delay();
 			travelForward();
 		} else {
 			// turn left
+			delay();
 			turnLeft();
+			delay();
 			travelForward();
 
 		}
@@ -141,28 +147,45 @@ public class Navigator {
 	 * robot goes forward one square (30cm)
 	 */
 	private void travelForward() {
-		float deg = convertDistance(MainProgram.WHEEL_RADIUS, 30);
+		float deg = convertDistance(MainProgram.WHEEL_RADIUS, 33);
 		leftMotor.setSpeed(FAST);
 		rightMotor.setSpeed(FAST);
 		// System.out.println("forward");
 		// System.out.println(deg);
 		//leftMotor.forward();		SAME THING AS BEFORE. SHOULDNT BE HERE
 		//rightMotor.forward();
+		
+		
 		leftMotor.rotate((int) deg, true);
 		rightMotor.rotate((int) deg, false);
+	}
+	
+	
+	public void reverseToDispenser() {
+		float deg = convertDistance(MainProgram.WHEEL_RADIUS, 13);
+		leftMotor.setSpeed(FAST);
+		rightMotor.setSpeed(FAST);
+		// System.out.println("forward");
+		// System.out.println(deg);
+		//leftMotor.forward();		SAME THING AS BEFORE. SHOULDNT BE HERE
+		//rightMotor.forward();
+		
+		
+		leftMotor.rotate((int) -deg, true);
+		rightMotor.rotate((int) -deg, false);
 	}
 
 	/*
 	 * checks if US sensor can detect an object in adjacent tile
 	 */
-	public boolean isObstacle(EV3UltrasonicSensor usSensor) {
+	public boolean isObstacle(EV3UltrasonicSensor usSensor, int distanceWall) {
 		boolean isObstacle = false;
 		float[] distance = { 0 };
 		usSensor.fetchSample(distance, 0);
 		distance[0] = distance[0] * 100;
 		// System.out.print(" d: ");
 		// System.out.println(distance[0]);
-		if (distance[0] < DETECTABLE_DISTANCE) {
+		if (distance[0] < distanceWall) {
 			isObstacle = true;
 		}
 		return isObstacle;
@@ -235,6 +258,9 @@ public class Navigator {
 		if (!(Math.abs(x - currentX) < CM_ERR)) {
 
 			if ((x - currentX) >= 0) {
+				
+
+				
 				turnTo(0, true);
 				//this.lineCount = 0;
 				
@@ -246,16 +272,18 @@ public class Navigator {
 						headingCorrect = false;
 					}
 					
-					this.setSpeeds(FAST, FAST);
 					if (setToSlow) {
-						this.setSpeeds(50, 50);
+						this.setSpeeds(SLOW_LINE, SLOW_LINE);
+					}else {
+						this.setSpeeds(FAST, FAST);
 					}
 
 					
-					if (isObstacle(middleUsSensor)) {
+					if (isObstacle(middleUsSensor, FRONT_DETECTABLE_DISTANCE)) {
 						this.setSpeeds(0, 0);
 						delay();
 						avoid();
+						delay();
 						travelTo(x, y);
 						return;
 					}
@@ -268,27 +296,33 @@ public class Navigator {
 
 
 			} else {
+				
+				
 				turnTo(180, true);
 			//	this.lineCount = 0;
 				
 				while ((odometer.getX() - x) > CM_ERR) {
-					
 					
 					if (headingCorrect) {
 						this.setSpeeds(0, 0);
 						headingCorrection(leftDistance, rightDistance);
 						headingCorrect = false;
 					}
-					this.setSpeeds(FAST, FAST);
+					
+					
+
 					if (setToSlow) {
-						this.setSpeeds(50, 50);
+						this.setSpeeds(SLOW_LINE, SLOW_LINE);
+					}else {
+						this.setSpeeds(FAST, FAST);
 					}
 
 					
-					if (isObstacle(middleUsSensor)) {
+					if (isObstacle(middleUsSensor, FRONT_DETECTABLE_DISTANCE)) {
 						this.setSpeeds(0, 0);
 						delay();
 						avoid();
+						delay();
 						travelTo(x, y);
 						return;
 					}
@@ -301,27 +335,33 @@ public class Navigator {
 		if (!(Math.abs(y - currentY) < CM_ERR)) {
 
 			if ((y - currentY) >= 0) {
+				
+				
 				turnTo(90, true);
 			//	this.lineCount = 0;
 				
 				while (((y - odometer.getY()) > CM_ERR)) {
-					
 					
 					if (headingCorrect) {
 						this.setSpeeds(0, 0);
 						headingCorrection(leftDistance, rightDistance);
 						headingCorrect = false;
 					}
-					this.setSpeeds(FAST, FAST);
+					
+				
 					if (setToSlow) {
-						this.setSpeeds(50, 50);
+						this.setSpeeds(SLOW_LINE, SLOW_LINE);
+					} else {
+						this.setSpeeds(FAST, FAST);
 					}
 
 					
-					if (isObstacle(middleUsSensor)) {
+					if (isObstacle(middleUsSensor, FRONT_DETECTABLE_DISTANCE)) {
 						this.setSpeeds(0, 0);
 						delay();
 						avoid();
+						delay();
+						travelTo(odometer.getX(), y);
 						travelTo(x, y);
 						return;
 					}
@@ -329,6 +369,9 @@ public class Navigator {
 				this.setSpeeds(0, 0);
 
 			} else {
+				
+			
+				
 				turnTo(270, true);
 			//	this.lineCount = 0;
 				
@@ -339,16 +382,20 @@ public class Navigator {
 						headingCorrection(leftDistance, rightDistance);
 						headingCorrect = false;
 					}
-					this.setSpeeds(FAST, FAST);
+
 					if (setToSlow) {
-						this.setSpeeds(50, 50);
+						this.setSpeeds(SLOW_LINE, SLOW_LINE);
+					}else {
+						this.setSpeeds(FAST, FAST);
 					}
 
 					
-					if (isObstacle(middleUsSensor)) {
+					if (isObstacle(middleUsSensor, FRONT_DETECTABLE_DISTANCE)) {
 						this.setSpeeds(0, 0);
 						delay();
 						avoid();
+						delay();
+						travelTo(odometer.getX(), y);
 						travelTo(x, y);
 						return;
 					}

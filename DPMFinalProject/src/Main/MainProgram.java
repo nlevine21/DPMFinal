@@ -42,7 +42,7 @@ public class MainProgram {
 	
 	// Constants
 	public static final double WHEEL_RADIUS = 2.1;
-	public static final double TRACK = 14.7;
+	public static final double TRACK = 14.65;
 	
 	public static boolean demo = true;
 
@@ -65,18 +65,41 @@ public class MainProgram {
 		Navigator nav = new Navigator(odo, leftUsSensor, middleUsSensor);
 		OdometryCorrection odoCorrect = new OdometryCorrection(odo, leftLightSensor, rightLightSensor, nav);
 
-		/*
+	
 		 // perform the ultrasonic localization
 		  USLocalizer usl = new USLocalizer(odo, middleUsSensor, nav); 
 		  usl.doLocalization();
-		  Sound.beep();
-		*/
+		
 	  
 		  //start odometry correction
+		
 		odoCorrect.start();
+		topMotor.stop(); topMotor2.stop();
+		nav.delay();
+		nav.travelTo(162, 20.5);
+		nav.travelTo(162, 31);
+		nav.turnTo(175, true);
+		
+		topMotor.setAcceleration(100); 
+		topMotor2.setAcceleration(100);
+		
+		topMotor.setSpeed(100);
+		topMotor2.setSpeed(100);
+		
+		topMotor.rotate(140, true); topMotor2.rotate(140, false);
+		nav.reverseToDispenser();
 
-		nav.travelTo(50, 50);
-		  
+		nav.setSpeeds(0, 0);
+		
+		Sound.beep();
+		
+		try {
+			Thread.sleep(4000);
+		} catch (Exception e) {
+			
+		}
+	
+	
 		  
 		  
 		 /* 
@@ -101,6 +124,10 @@ public class MainProgram {
 			  launch.launchBall();
 		  }
 		  */
+	}
+	
+	private void goToDispenser(int bx, int by) {
+		
 	}
 		
 

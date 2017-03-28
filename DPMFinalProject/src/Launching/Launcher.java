@@ -38,15 +38,7 @@ public class Launcher {
 		
 		public void launchBall() {
 			//Rotate the motors forward to prepare for launch
-			topMotor.setAcceleration(100); 
-			topMotor2.setAcceleration(100);
-			
-			topMotor.setSpeed(100);
-			topMotor2.setSpeed(100);
-	
-			topMotor.rotate(150, true); 
-			topMotor2.rotate(150, false);
-			
+
 			delay();
 			
 			topMotor.rotate(-INITIAL_ANGLE, true);

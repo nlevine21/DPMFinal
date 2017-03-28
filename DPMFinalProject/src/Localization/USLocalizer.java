@@ -10,9 +10,9 @@ import lejos.robotics.SampleProvider;
 import lejos.utility.Delay;
 
 public class USLocalizer {
-	public static float ROTATION_SPEED = 120;
+	public static float ROTATION_SPEED = 180;
 	
-	private static final int WALL_DIST	= 33;  // WALL_DIST is the distance needed to detect a wall
+	private static final int WALL_DIST	= 30;  // WALL_DIST is the distance needed to detect a wall
 	private Odometer odo;
 	private SensorModes usSensor;
 	private SampleProvider usValue;
