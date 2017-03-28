@@ -68,26 +68,26 @@ public class OdometryCorrection extends Thread {
 			
 			if (Math.abs(odometer.getX() - lastX) >= 32) {
 				
-				updateTileAndOdometer(odometer.getDirection());
+				updateTileAndOdometer(odometer.getDirection(), true);
 				lastX = odometer.getX();
 				continue;
 
 			}
 			
 			if (Math.abs(odometer.getY() - lastY) >= 32) {
-				updateTileAndOdometer(odometer.getDirection());
+				updateTileAndOdometer(odometer.getDirection(), true);
 				lastY = odometer.getY();
 				continue;
 			}
 			
 			if (odometer.TILE[0] == 0 && Math.abs(odometer.getX() - lastX) > 15) {
-				updateTileAndOdometer(odometer.getDirection());
+				updateTileAndOdometer(odometer.getDirection(), true);
 				lastX = odometer.getX();
 				continue;
 			}
 			
 			if (odometer.TILE[1] == 0 && Math.abs(odometer.getY() - lastY) > 15) {
-				updateTileAndOdometer(odometer.getDirection());
+				updateTileAndOdometer(odometer.getDirection(), true);
 				lastY = odometer.getY();
 				continue;
 			}
@@ -128,7 +128,7 @@ public class OdometryCorrection extends Thread {
 				
 				if (count < COUNT) {
 					nav.setHeadingCorrection(leftDistance, rightDistance, true);
-					updateTileAndOdometer(odometer.getDirection());
+					updateTileAndOdometer(odometer.getDirection(), false);
 					lastX = odometer.getX();
 					lastY = odometer.getY();
 
@@ -166,7 +166,7 @@ public class OdometryCorrection extends Thread {
 				
 					if (count < COUNT) {
 						nav.setHeadingCorrection(leftDistance, rightDistance, true);
-						updateTileAndOdometer(odometer.getDirection());
+						updateTileAndOdometer(odometer.getDirection(), false);
 						lastX = odometer.getX();
 						lastY = odometer.getY();
 
@@ -250,7 +250,7 @@ public class OdometryCorrection extends Thread {
 	 * @param dir The direction which the robot is heading
 	 * 
 	 */
-	public void updateTileAndOdometer(Odometer.Direction dir) {
+	public void updateTileAndOdometer(Odometer.Direction dir, boolean missedTile) {
 		
 		Sound.beepSequence();
 		double[] position = { 0, 0, 0 };
@@ -258,7 +258,11 @@ public class OdometryCorrection extends Thread {
 		switch (dir) {
 		case E:
 			position[0] = (odometer.TILE[0] * TILE) - SENSOR_DIST;
-			update[0] = true;
+			
+			if (!missedTile) {
+				update[0] = true;
+			}
+			
 			position[2] = 0;
 			update[2] = true;
 			odometer.setPosition(position, update);
@@ -268,7 +272,11 @@ public class OdometryCorrection extends Thread {
 			break;
 		case W:
 			position[0] = ((odometer.TILE[0] - 1) * TILE) + SENSOR_DIST;
-			update[0] = true;
+			
+			if (!missedTile) {
+				update[0] = true;
+			}
+			
 			position[2] = 180;
 			update[2] = true;
 			odometer.setPosition(position, update);
@@ -276,7 +284,11 @@ public class OdometryCorrection extends Thread {
 			break;
 		case N:
 			position[1] = ((odometer.TILE[1]) * TILE) - SENSOR_DIST;
-			update[1] = true;
+			
+			if (!missedTile) {
+				update[1] = true;
+			}
+			
 			position[2] = 90;
 			update[2] = true;
 			odometer.setPosition(position, update);
@@ -284,7 +296,11 @@ public class OdometryCorrection extends Thread {
 			break;
 		case S:
 			position[1] = ((odometer.TILE[1] - 1) * TILE) + SENSOR_DIST;
-			update[1] = true;
+			
+			if (!missedTile) {
+				update[1] = true;
+			}
+			
 			position[2] = 270;
 			update[2] = true;
 			odometer.setPosition(position, update);
