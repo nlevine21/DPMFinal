@@ -177,7 +177,7 @@ public class Navigator {
 	private void travelForward() {
 		this.headingCorrect = false;
 		
-		float deg = convertDistance(MainProgram.WHEEL_RADIUS, 32);
+		float deg = convertDistance(MainProgram.WHEEL_RADIUS, 25);
 		leftMotor.setSpeed(FAST);
 		rightMotor.setSpeed(FAST);
 		// System.out.println("forward");
