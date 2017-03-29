@@ -73,6 +73,21 @@ public class Navigator {
 		
 		this.headingCorrect = false;
 	}
+	
+	public Navigator(Odometer odo) {
+		this.lineCount = 0;
+
+		EV3LargeRegulatedMotor[] motors = this.odometer.getMotors();
+		this.leftMotor = motors[0];
+		this.rightMotor = motors[1];
+
+		// set acceleration
+		this.leftMotor.setAcceleration(ACCELERATION);
+		this.rightMotor.setAcceleration(ACCELERATION);
+		
+		this.headingCorrect = false;
+		
+	}
 
 
 
@@ -177,7 +192,7 @@ public class Navigator {
 	private void travelForward() {
 		this.headingCorrect = false;
 		
-		float deg = convertDistance(MainProgram.WHEEL_RADIUS, 25);
+		float deg = convertDistance(MainProgram.WHEEL_RADIUS, 32);
 		leftMotor.setSpeed(FAST);
 		rightMotor.setSpeed(FAST);
 		// System.out.println("forward");
@@ -198,9 +213,9 @@ public class Navigator {
 	 * 
 	 */
 	public void reverseToDispenser() {
-		float deg = convertDistance(MainProgram.WHEEL_RADIUS, 15);
-		leftMotor.setSpeed(FAST);
-		rightMotor.setSpeed(FAST);
+		float deg = convertDistance(MainProgram.WHEEL_RADIUS, 19);
+		leftMotor.setSpeed(SLOW);
+		rightMotor.setSpeed(SLOW);
 		// System.out.println("forward");
 		// System.out.println(deg);
 		//leftMotor.forward();		SAME THING AS BEFORE. SHOULDNT BE HERE
@@ -543,7 +558,7 @@ public class Navigator {
 	 * 
 	 */
 	public void delay() {
-		Delay.msDelay(2000);
+		Delay.msDelay(1000);
 	}
 	
 	/**
