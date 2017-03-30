@@ -103,11 +103,9 @@ public class MainProgram {
 		
 		
 
-		int bx = 11; int by = 1;
-		goToDispenser(bx, by, -1, 11, nav);
+		int bx = 8; int by = 3;
+		goToDispenser(bx, by, -1, 3, nav);
 		
-
-
 
 		
 		Sound.beep();
@@ -117,6 +115,15 @@ public class MainProgram {
 		} catch (Exception e) {
 			
 		}
+		
+		int[] target = {11,1};
+		int distance = 5;
+		goToLaunchPoint(target[0], target[1], distance, nav);
+		
+		
+		Launcher launch = new Launcher(topMotor, topMotor2, distance);
+		
+		launch.launchBall();
 	
 	
 		  
@@ -149,7 +156,7 @@ public class MainProgram {
 	private static void dispenserLocalize(Navigator nav) {
 		
 		while (!isLineOnBack()) {
-			nav.setSpeeds(-30, 30);
+			nav.setSpeeds(-40, 40);
 		}
 		
 	}
@@ -180,28 +187,28 @@ public class MainProgram {
 			xCm -= TILE_LENGTH;
 			nav.travelTo(xCm - 15, yCm - 15);
 			nav.travelTo(xCm - 15, yCm);
-			nav.travelTo(xCm - 22, yCm);
+			nav.travelTo(xCm - 19, yCm);
 			nav.turnTo(150, true);
 		}
 		else if (bx == min) {
 			xCm += TILE_LENGTH;
 			nav.travelTo(xCm + 15, yCm - 15);
 			nav.travelTo(xCm + 15, yCm);
-			nav.travelTo(xCm + 22, yCm);
+			nav.travelTo(xCm + 19, yCm);
 			nav.turnTo(330, true);
 		}
 		else if (by == max) {
 			yCm -= TILE_LENGTH;
 			nav.travelTo(xCm - 15, yCm - 15);
 			nav.travelTo(xCm, yCm - 15);
-			nav.travelTo(xCm, yCm - 22);
+			nav.travelTo(xCm, yCm - 19);
 			nav.turnTo(240, true);
 		}
 		else if (by == min) {
 			yCm += TILE_LENGTH;
 			nav.travelTo(xCm - 15, yCm + 15);
 			nav.travelTo(xCm, yCm + 15);
-			nav.travelTo(xCm, yCm + 22);
+			nav.travelTo(xCm, yCm + 19);
 			nav.turnTo(60, true);
 		}
 		
@@ -219,8 +226,22 @@ public class MainProgram {
 		dispenserLocalize(nav);
 		
 		nav.setSpeeds(0, 0);
+		
 		nav.reverseToDispenser();
 
+	}
+	
+	private static void goToLaunchPoint (int targetX, int targetY, int distance, Navigator nav) {
+		
+		double targetXCm = targetX * TILE_LENGTH;
+		double targetYCm = targetY * TILE_LENGTH;
+		double distanceCm = distance * TILE_LENGTH;
+	
+		nav.travelTo((targetXCm - distanceCm) - 15, targetYCm + 15);
+		nav.travelTo((targetXCm - distanceCm) - 15 , targetYCm);
+		nav.turnTo(60, true);
+		dispenserLocalize(nav);
+		
 	}
 		
 

@@ -124,7 +124,7 @@ public class Navigator {
 			if (!blocked) {
 				delay();
 				
-				travelForward();
+				travelForward(30);
 				
 				while (true) {
 					
@@ -148,7 +148,7 @@ public class Navigator {
 						turnLeft();
 					}
 					
-					travelForward();
+					travelForward(30);
 				}
 			}
 			else {
@@ -218,10 +218,10 @@ public class Navigator {
 	 * 
 	 * 
 	 */
-	private void travelForward() {
+	public void travelForward(int distance) {
 		this.headingCorrect = false;
 		
-		float deg = convertDistance(MainProgram.WHEEL_RADIUS, 30);
+		float deg = convertDistance(MainProgram.WHEEL_RADIUS, distance);
 		leftMotor.setSpeed(FAST);
 		rightMotor.setSpeed(FAST);
 		// System.out.println("forward");
@@ -242,7 +242,7 @@ public class Navigator {
 	 * 
 	 */
 	public void reverseToDispenser() {
-		float deg = convertDistance(MainProgram.WHEEL_RADIUS, 19);
+		float deg = convertDistance(MainProgram.WHEEL_RADIUS, 15);
 		leftMotor.setSpeed(SLOW);
 		rightMotor.setSpeed(SLOW);
 		// System.out.println("forward");
