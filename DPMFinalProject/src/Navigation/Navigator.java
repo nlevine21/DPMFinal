@@ -128,7 +128,7 @@ public class Navigator {
 				
 				while (true) {
 					
-					if ((count % 2) == 0) {
+					if ((count % 2) != 0) {
 						turnLeft();
 					}
 					else {
@@ -137,10 +137,11 @@ public class Navigator {
 					
 					if(!isObstacle(middleUsSensor, SIDE_DETECTABLE_DISTANCE)) {
 						this.headingCorrect = false;
+						this.setSpeeds(0,0);
 						return;
 					}
 					
-					if ((count % 2) == 0) {
+					if ((count % 2) != 0) {
 						turnRight();
 					}
 					else {
@@ -220,7 +221,7 @@ public class Navigator {
 	private void travelForward() {
 		this.headingCorrect = false;
 		
-		float deg = convertDistance(MainProgram.WHEEL_RADIUS, 32);
+		float deg = convertDistance(MainProgram.WHEEL_RADIUS, 30);
 		leftMotor.setSpeed(FAST);
 		rightMotor.setSpeed(FAST);
 		// System.out.println("forward");
