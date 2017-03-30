@@ -116,7 +116,9 @@ public class MainProgram {
 			
 		}
 		
-		int[] target = {11,1};
+		nav.travelForward(15);
+		
+		int[] target = {15,1};
 		int distance = 5;
 		goToLaunchPoint(target[0], target[1], distance, nav);
 		
@@ -156,8 +158,10 @@ public class MainProgram {
 	private static void dispenserLocalize(Navigator nav) {
 		
 		while (!isLineOnBack()) {
-			nav.setSpeeds(-40, 40);
+			nav.setSpeeds(-30, 30);
 		}
+		
+		nav.setSpeeds(0, 0);
 		
 	}
 	
@@ -239,7 +243,7 @@ public class MainProgram {
 	
 		nav.travelTo((targetXCm - distanceCm) - 15, targetYCm + 15);
 		nav.travelTo((targetXCm - distanceCm) - 15 , targetYCm);
-		nav.turnTo(60, true);
+		nav.turnTo(330, true);
 		dispenserLocalize(nav);
 		
 	}
