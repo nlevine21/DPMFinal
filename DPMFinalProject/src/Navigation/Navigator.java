@@ -40,6 +40,8 @@ public class Navigator {
 	
 	private boolean headingCorrect, setToSlow;
 	
+	public boolean turnOffSensor = false;
+	
 	private double leftDistance, rightDistance;
 	
 	private final double LIGHT_SENSOR_DIST = 9.9;
@@ -107,7 +109,7 @@ public class Navigator {
 
 		
 		delay();
-		turnRight();
+		turnRight(90);
 		
 		int count = 0;
 		
@@ -129,10 +131,10 @@ public class Navigator {
 				while (true) {
 					
 					if ((count % 2) != 0) {
-						turnLeft();
+						turnLeft(90);
 					}
 					else {
-						turnRight();
+						turnRight(90);
 					}
 					
 					if(!isObstacle(middleUsSensor, SIDE_DETECTABLE_DISTANCE)) {
@@ -142,18 +144,18 @@ public class Navigator {
 					}
 					
 					if ((count % 2) != 0) {
-						turnRight();
+						turnRight(90);
 					}
 					else {
-						turnLeft();
+						turnLeft(90);
 					}
 					
 					travelForward(30);
 				}
 			}
 			else {
-				turnLeft();
-				turnLeft();
+				turnLeft(90);
+				turnLeft(90);
 			}
 		}
 		
@@ -170,9 +172,9 @@ public class Navigator {
 	 * 
 	 * 
 	 */
-	private void turnLeft() {
+	public void turnLeft(int angle) {
 		// turning more than 90 deg, needs to be fixed
-		float deg = convertAngle(MainProgram.WHEEL_RADIUS, MainProgram.TRACK, 90);
+		float deg = convertAngle(MainProgram.WHEEL_RADIUS, MainProgram.TRACK, angle);
 		// System.out.println("left");
 		// System.out.println(deg);
 		leftMotor.setSpeed(SLOW);
@@ -192,9 +194,9 @@ public class Navigator {
 	 * 
 	 * 
 	 */
-	private void turnRight() {
+	public void turnRight(int angle) {
 		// turning more than 90 deg, needs to be fixed
-		float deg = convertAngle(MainProgram.WHEEL_RADIUS, MainProgram.TRACK, 90);
+		float deg = convertAngle(MainProgram.WHEEL_RADIUS, MainProgram.TRACK, angle);
 		leftMotor.setSpeed(SLOW);
 		rightMotor.setSpeed(SLOW);
 		// System.out.println("right");
@@ -268,6 +270,11 @@ public class Navigator {
 	 * 
 	 */
 	public boolean isObstacle(EV3UltrasonicSensor usSensor, int distanceWall) {
+		
+		if (turnOffSensor) {
+			usSensor.disable();
+			return false;
+		}
 		boolean isObstacle = false;
 		float[] distance = { 0 };
 		usSensor.fetchSample(distance, 0);

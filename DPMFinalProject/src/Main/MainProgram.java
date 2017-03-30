@@ -106,7 +106,7 @@ public class MainProgram {
 		int bx = 8; int by = 3;
 		goToDispenser(bx, by, -1, 3, nav);
 		
-
+		middleUsSensor.disable();
 		
 		Sound.beep();
 		
@@ -163,6 +163,7 @@ public class MainProgram {
 		
 		nav.setSpeeds(0, 0);
 		
+		nav.turnLeft(5);
 	}
 	
 	private static boolean isLineOnBack() {
@@ -237,12 +238,14 @@ public class MainProgram {
 	
 	private static void goToLaunchPoint (int targetX, int targetY, int distance, Navigator nav) {
 		
+		nav.turnOffSensor = true;
+		
 		double targetXCm = targetX * TILE_LENGTH;
 		double targetYCm = targetY * TILE_LENGTH;
 		double distanceCm = distance * TILE_LENGTH;
 	
-		nav.travelTo((targetXCm - distanceCm) - 15, targetYCm + 15);
-		nav.travelTo((targetXCm - distanceCm) - 15 , targetYCm);
+		nav.travelTo((targetXCm - distanceCm) - 10, targetYCm + 15);
+		nav.travelTo((targetXCm - distanceCm) - 10 , targetYCm);
 		nav.turnTo(330, true);
 		dispenserLocalize(nav);
 		
