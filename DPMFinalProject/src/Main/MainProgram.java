@@ -163,7 +163,7 @@ public class MainProgram {
 		
 		nav.setSpeeds(0, 0);
 		
-		nav.turnLeft(5);
+		nav.turnRight(5);
 	}
 	
 	private static boolean isLineOnBack() {
