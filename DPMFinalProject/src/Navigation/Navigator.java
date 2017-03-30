@@ -109,8 +109,13 @@ public class Navigator {
 		delay();
 		turnRight();
 		
+		int count = 0;
+		
 		
 		while (true) {
+			
+			count++;
+			
 			boolean blocked = false;
 			if (isObstacle(middleUsSensor, SIDE_DETECTABLE_DISTANCE)) {
 				blocked = true;
@@ -118,9 +123,32 @@ public class Navigator {
 			
 			if (!blocked) {
 				delay();
+				
 				travelForward();
-				this.headingCorrect = false;
-				return;
+				
+				while (true) {
+					
+					if ((count % 2) == 0) {
+						turnLeft();
+					}
+					else {
+						turnRight();
+					}
+					
+					if(!isObstacle(middleUsSensor, SIDE_DETECTABLE_DISTANCE)) {
+						this.headingCorrect = false;
+						return;
+					}
+					
+					if ((count % 2) == 0) {
+						turnRight();
+					}
+					else {
+						turnLeft();
+					}
+					
+					travelForward();
+				}
 			}
 			else {
 				turnLeft();
