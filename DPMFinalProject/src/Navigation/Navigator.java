@@ -244,7 +244,7 @@ public class Navigator {
 	 * 
 	 */
 	public void reverseToDispenser() {
-		float deg = convertDistance(MainProgram.WHEEL_RADIUS, 13);
+		float deg = convertDistance(MainProgram.WHEEL_RADIUS, 15);
 		leftMotor.setSpeed(SLOW);
 		rightMotor.setSpeed(SLOW);
 		// System.out.println("forward");
@@ -639,6 +639,12 @@ public class Navigator {
 		
 		double angle = Math.asin(opposite/hypotenuse) * 180/Math.PI;
 		int angleToRotate = convertAngle(MainProgram.WHEEL_RADIUS, MainProgram.TRACK, angle);
+		
+		if (odometer.getDirection() == Direction.W || odometer.getDirection() == Direction.S) {
+			double swap = leftDistance;
+			rightDistance = swap;
+			leftDistance = rightDistance;
+		}
 		
 		if (leftDistance > rightDistance) {
 			leftMotor.setSpeed(SLOW); rightMotor.setSpeed(SLOW);

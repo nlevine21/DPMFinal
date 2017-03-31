@@ -103,7 +103,7 @@ public class MainProgram {
 		
 		
 
-		int bx = 1; int by = -1;
+		int bx = 4; int by = -1;
 		goToDispenser(bx, by, -1, 3, nav);
 		
 		middleUsSensor.disable();
@@ -116,10 +116,10 @@ public class MainProgram {
 			
 		}
 		
-		nav.travelForward(15);
+		nav.travelForward(10);
 		
-		int[] target = {8,1};
-		int distance = 7;
+		int[] target = {7,1};
+		int distance = 5;
 		goToLaunchPoint(target[0], target[1], distance, nav);
 		
 		
@@ -224,7 +224,7 @@ public class MainProgram {
 		topMotor.setSpeed(100);
 		topMotor2.setSpeed(100);
 		
-		topMotor.rotate(140, true); topMotor2.rotate(140, false);
+		topMotor.rotate(135, true); topMotor2.rotate(135, false);
 
 		
 		dispenserLocalize(nav);
@@ -232,6 +232,8 @@ public class MainProgram {
 		nav.setSpeeds(0, 0);
 		
 		nav.reverseToDispenser();
+		
+		topMotor.stop(); topMotor2.stop();
 		
 	
 	}

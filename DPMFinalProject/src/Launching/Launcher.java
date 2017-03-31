@@ -26,7 +26,7 @@ public class Launcher {
 
 		// Constants
 		private static final int ACCELERATION = 6000;
-		private static final int LAUNCH_ANGLE5 = 210;
+		private static final int LAUNCH_ANGLE5 = 230;
 		private static final int LAUNCH_ANGLE6 = 90;
 		private static final int LAUNCH_ANGLE7 = 80; // AMAZING
 		private static final int LAUNCH_ANGLE8 = 85; // OK
