@@ -103,7 +103,7 @@ public class MainProgram {
 		
 		
 
-		int bx = 8; int by = 3;
+		int bx = 2; int by = 3;
 		goToDispenser(bx, by, -1, 3, nav);
 		
 		middleUsSensor.disable();
@@ -118,8 +118,8 @@ public class MainProgram {
 		
 		nav.travelForward(15);
 		
-		int[] target = {15,1};
-		int distance = 5;
+		int[] target = {9,1};
+		int distance = 7;
 		goToLaunchPoint(target[0], target[1], distance, nav);
 		
 		
