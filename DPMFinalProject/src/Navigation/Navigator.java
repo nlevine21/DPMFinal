@@ -244,7 +244,7 @@ public class Navigator {
 	 * 
 	 */
 	public void reverseToDispenser() {
-		float deg = convertDistance(MainProgram.WHEEL_RADIUS, 15);
+		float deg = convertDistance(MainProgram.WHEEL_RADIUS, 13);
 		leftMotor.setSpeed(SLOW);
 		rightMotor.setSpeed(SLOW);
 		// System.out.println("forward");

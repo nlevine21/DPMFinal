@@ -26,18 +26,16 @@ public class Launcher {
 
 		// Constants
 		private static final int ACCELERATION = 6000;
-		private static final int LAUNCH_ANGLE4 = 90;
-		private static final int LAUNCH_ANGLE5 = 90;
+		private static final int LAUNCH_ANGLE5 = 210;
 		private static final int LAUNCH_ANGLE6 = 90;
-		private static final int LAUNCH_ANGLE7 = 90;
-		private static final int LAUNCH_ANGLE8 = 90;
+		private static final int LAUNCH_ANGLE7 = 80; // AMAZING
+		private static final int LAUNCH_ANGLE8 = 85; // OK
 		private static final int INITIAL_ANGLE = 30;	
-		private static final int FOUR_TILES = 4;
-		private static final int FIVE_TILES = 5;
-		private static final int SIX_TILES = 6;
-		private static final int SEVEN_TILES = 7;
+		private static final int FIVE_TILES = 4;
+		private static final int SIX_TILES = 8;
+		private static final int SEVEN_TILES = 8;
 		private static final int EIGHT_TILES = 8;
-		private static final int PRIME_ANGLE = 130;  // NEED TO CALCULATE THIS EXPERIMENTALLY. IT IS THE ANGLE TO MAKE ARM UP
+		private static final int PRIME_ANGLE = 180;  // NEED TO CALCULATE THIS EXPERIMENTALLY. IT IS THE ANGLE TO MAKE ARM UP
 		
 		
 		/**
@@ -73,11 +71,7 @@ public class Launcher {
 			
 		
 				
-					if (TILES==4){
-						//Launch the ball
-						launch(FOUR_TILES, LAUNCH_ANGLE4);
-					}
-					else if (TILES==5){
+				 if (TILES==5){
 						//Launch the ball
 						launch(FIVE_TILES, LAUNCH_ANGLE5);
 					}
@@ -111,32 +105,75 @@ public class Launcher {
 		 */
 		private void launch(int tiles, int angle) {
 			
+
+				
 				//Set the accelerations of the top motors
 				topMotor.setAcceleration(ACCELERATION); 
 				topMotor2.setAcceleration(ACCELERATION);
 				
 				//Set the speeds of the top motors
-				topMotor.setSpeed((tiles / 8) * topMotor.getMaxSpeed());
-				topMotor2.setSpeed((tiles/8)*topMotor2.getMaxSpeed());
+				topMotor.setSpeed(((int)(100*tiles/8)*topMotor.getMaxSpeed())/100);
+				topMotor2.setSpeed(((int)((100*tiles/8)*topMotor.getMaxSpeed())/100));
 				
-				// Set up tachometer values
-				topMotor.resetTachoCount();
+			/*	// Set up tachometer values
+				
+			topMotor2.getTachoCount();
+			
 			
 				
 				// Set the motors to move
 				topMotor.backward();
 				topMotor2.backward();
 				
-				while (true) {
+				while (true) { 
 					
-					if (topMotor.getTachoCount() >= angle){
+					
+					
+					if (Math.abs(topMotor2.getPosition()) >= angle){
 						
+						Sound.buzz();
 						topMotor.flt(true);
-						topMotor.flt(false);
+						topMotor2.flt(true);
+						Sound.buzz();
 						break;
 					}
+				}
+					*/
+				
+				
+				// Move motors and store current position
+				
+			
+				
+				
+				double Count1 = topMotor.getTachoCount();
+				double Count2 = topMotor.getTachoCount();
+				
+				
+				topMotor.backward();
+				topMotor2.backward();
+				
+			
+			
+				
+				while (true){
+				
+				Sound.beep();
+				Count2 = topMotor.getTachoCount();
+				if ( (Math.abs( Count2) -  Math.abs(Count1) )<= angle){
 					
-					delay (5000);
+					
+					topMotor.flt(true);
+					topMotor2.flt(true);
+					
+					
+					break;
+					
+					
+					
+				}}
+				
+					delay (10000);
 					
 					// Set return speed
 					
@@ -147,17 +184,13 @@ public class Launcher {
 					
 					topMotor.forward();
 					topMotor2.forward();
-					topMotor.setStallThreshold(1, 2000);
 					
-					delay(5000);
+					
+				delay(5000);
 
-					
-					if (topMotor.isStalled() == true){
-						
+
 						Sound.beepSequenceUp();
-						
-						topMotor.stop();
-						topMotor2.stop();
+					
 						
 						topMotor.rotate(-PRIME_ANGLE, true);
 						topMotor2.rotate(-PRIME_ANGLE, false);
@@ -166,14 +199,18 @@ public class Launcher {
 						topMotor2.stop();
 						
 						Sound.beepSequence();
+						
+						
 					}
-				}
+					
+					
 				
 				
 				
-		}
-		
-		
+				
+
+
+
 		/**
 		 * This method delays the thread by 2 seconds for synchronization
 		 * 
@@ -183,4 +220,4 @@ public class Launcher {
 		private static void delay(int time) {
 			Delay.msDelay(time);
 		}
-}
+		}

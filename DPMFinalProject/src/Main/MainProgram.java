@@ -103,7 +103,7 @@ public class MainProgram {
 		
 		
 
-		int bx = 2; int by = 3;
+		int bx = 1; int by = -1;
 		goToDispenser(bx, by, -1, 3, nav);
 		
 		middleUsSensor.disable();
@@ -118,7 +118,7 @@ public class MainProgram {
 		
 		nav.travelForward(15);
 		
-		int[] target = {9,1};
+		int[] target = {8,1};
 		int distance = 7;
 		goToLaunchPoint(target[0], target[1], distance, nav);
 		
@@ -163,7 +163,6 @@ public class MainProgram {
 		
 		nav.setSpeeds(0, 0);
 		
-		nav.turnRight(5);
 	}
 	
 	private static boolean isLineOnBack() {
@@ -225,7 +224,7 @@ public class MainProgram {
 		topMotor.setSpeed(100);
 		topMotor2.setSpeed(100);
 		
-		topMotor.rotate(155, true); topMotor2.rotate(155, false);
+		topMotor.rotate(140, true); topMotor2.rotate(140, false);
 
 		
 		dispenserLocalize(nav);
@@ -233,7 +232,8 @@ public class MainProgram {
 		nav.setSpeeds(0, 0);
 		
 		nav.reverseToDispenser();
-
+		
+	
 	}
 	
 	private static void goToLaunchPoint (int targetX, int targetY, int distance, Navigator nav) {
