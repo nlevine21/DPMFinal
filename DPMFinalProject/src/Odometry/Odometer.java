@@ -233,7 +233,7 @@ public class Odometer implements TimerListener {
 	 *
 	 *
 	 */
-	public Direction getDirection() {// TODO check this
+	public Direction getDirection() {
 		if (theta > 315 || theta <= 45) {
 			return Direction.E;
 		} else if (theta > 45 & theta <= 135) {

@@ -48,7 +48,7 @@ public class MainProgram {
 	
 
 	private static final int [] targetPosition = {5,6};
-	private static final double TILE_LENGTH = 30.48;
+	public static final double TILE_LENGTH = 30.48;
 	
 	// Constants
 	public static final double WHEEL_RADIUS = 2.1;
@@ -91,6 +91,7 @@ public class MainProgram {
 		 // perform the ultrasonic localization
 		  USLocalizer usl = new USLocalizer(odo, middleUsSensor, nav); 
 		  usl.doLocalization();
+	
 		  
 		  double[] position = {-15,-15,0}; boolean[] update = {true,true,true};
 		  odo.setPosition(position, update);
@@ -99,33 +100,43 @@ public class MainProgram {
 		
 		odoCorrect.start();
 		topMotor.stop(); topMotor2.stop();
+	
 		
-		
-		
-
-		int bx = 4; int by = -1;
-		goToDispenser(bx, by, -1, 3, nav);
-		
-		middleUsSensor.disable();
-		
-		Sound.beep();
-		
-		try {
-			Thread.sleep(4000);
-		} catch (Exception e) {
-			
-		}
-		
-		nav.travelForward(10);
-		
-		int[] target = {7,1};
 		int distance = 5;
-		goToLaunchPoint(target[0], target[1], distance, nav);
-		
-		
 		Launcher launch = new Launcher(topMotor, topMotor2, distance);
+		int bx = 8; int by = 7;
 		
-		launch.launchBall();
+		//goToDispenser(bx, by, -1, 7, nav);
+		
+		nav.travelTo(75, 75, false);
+		
+		/*
+		for (int i=0; i<1; i++) {
+			int bx = 4; int by = -1;
+			goToDispenser(bx, by, -1, 11, nav);
+			
+			middleUsSensor.disable();
+			
+			Sound.beep();
+			
+			try {
+				Thread.sleep(4000);
+			} catch (Exception e) {
+				
+			}
+			
+			nav.travelForward(10);
+			
+			int[] target = {7,1};
+			goToLaunchPoint(target[0], target[1], distance, nav);
+			launch.launchBall();
+		} */
+	
+		
+		
+		
+		
+		
 	
 	
 		  
@@ -189,30 +200,30 @@ public class MainProgram {
 		
 		if (bx == max) {
 			xCm -= TILE_LENGTH;
-			nav.travelTo(xCm - 15, yCm - 15);
-			nav.travelTo(xCm - 15, yCm);
-			nav.travelTo(xCm - 19, yCm);
+			nav.travelTo(xCm - 15, yCm - 15, true);
+			nav.travelTo(xCm - 15, yCm, true);
+			nav.travelTo(xCm - 19, yCm, true);
 			nav.turnTo(150, true);
 		}
 		else if (bx == min) {
 			xCm += TILE_LENGTH;
-			nav.travelTo(xCm + 15, yCm - 15);
-			nav.travelTo(xCm + 15, yCm);
-			nav.travelTo(xCm + 19, yCm);
+			nav.travelTo(xCm + 15, yCm - 15, true);
+			nav.travelTo(xCm + 15, yCm, true);
+			nav.travelTo(xCm + 19, yCm, true);
 			nav.turnTo(330, true);
 		}
 		else if (by == max) {
 			yCm -= TILE_LENGTH;
-			nav.travelTo(xCm - 15, yCm - 15);
-			nav.travelTo(xCm, yCm - 15);
-			nav.travelTo(xCm, yCm - 19);
+			nav.travelTo(xCm - 15, yCm - 15, true);
+			nav.travelTo(xCm, yCm - 15, true);
+			nav.travelTo(xCm, yCm - 19, true);
 			nav.turnTo(240, true);
 		}
 		else if (by == min) {
 			yCm += TILE_LENGTH;
-			nav.travelTo(xCm - 15, yCm + 15);
-			nav.travelTo(xCm, yCm + 15);
-			nav.travelTo(xCm, yCm + 19);
+			nav.travelTo(xCm - 15, yCm + 15, true);
+			nav.travelTo(xCm, yCm + 15, true);
+			nav.travelTo(xCm, yCm + 19, true);
 			nav.turnTo(60, true);
 		}
 		
@@ -246,8 +257,8 @@ public class MainProgram {
 		double targetYCm = targetY * TILE_LENGTH;
 		double distanceCm = distance * TILE_LENGTH;
 	
-		nav.travelTo((targetXCm - distanceCm) - 10, targetYCm + 15);
-		nav.travelTo((targetXCm - distanceCm) - 10 , targetYCm);
+		nav.travelTo((targetXCm - distanceCm) - 8, targetYCm + 15, true);
+		nav.travelTo((targetXCm - distanceCm) - 8 , targetYCm, true);
 		nav.turnTo(330, true);
 		dispenserLocalize(nav);
 		

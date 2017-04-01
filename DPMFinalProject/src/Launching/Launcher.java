@@ -31,10 +31,10 @@ public class Launcher {
 		private static final int LAUNCH_ANGLE7 = 80; // AMAZING
 		private static final int LAUNCH_ANGLE8 = 85; // OK
 		private static final int INITIAL_ANGLE = 30;	
-		private static final int FIVE_TILES = 4;
-		private static final int SIX_TILES = 8;
-		private static final int SEVEN_TILES = 8;
-		private static final int EIGHT_TILES = 8;
+		private static final double FIVE_TILES = 3.8;
+		private static final double SIX_TILES = 8;
+		private static final double SEVEN_TILES = 8;
+		private static final double EIGHT_TILES = 8;
 		private static final int PRIME_ANGLE = 180;  // NEED TO CALCULATE THIS EXPERIMENTALLY. IT IS THE ANGLE TO MAKE ARM UP
 		
 		
@@ -103,7 +103,7 @@ public class Launcher {
 		 * @param angle The angle which the launch motors must rotate
 		 *     	
 		 */
-		private void launch(int tiles, int angle) {
+		private void launch(double tiles, double angle) {
 			
 
 				
@@ -173,7 +173,7 @@ public class Launcher {
 					
 				}}
 				
-					delay (10000);
+					delay (5000);
 					
 					// Set return speed
 					
@@ -186,7 +186,7 @@ public class Launcher {
 					topMotor2.forward();
 					
 					
-				delay(5000);
+				delay(3500);
 
 
 						Sound.beepSequenceUp();

@@ -84,8 +84,15 @@ public class OdometryCorrection extends Thread {
 		
 		double lastX = odometer.getX();
 		double lastY = odometer.getY();
+		Direction prevDirection = odometer.getDirection();
 		
 		while (true) {
+			
+			if(!(odometer.getDirection().equals(prevDirection))) {
+				lastX = odometer.getX();
+				lastY = odometer.getY();
+				prevDirection = odometer.getDirection();
+			}
 			
 			if (Math.abs(odometer.getX() - lastX) >= 32) {
 				
@@ -199,7 +206,7 @@ public class OdometryCorrection extends Thread {
 			nav.setToSlow(false);
 			
 			try {
-				Thread.sleep(1500);
+				Thread.sleep(750);
 			} catch (InterruptedException e) {
 				
 				return;
