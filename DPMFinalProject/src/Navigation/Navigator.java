@@ -222,18 +222,20 @@ public class Navigator {
 	public void travelForward(int distance) {
 		
 		Direction dir = odometer.getDirection();
+		double currentX = odometer.getX();
+		double currentY = odometer.getY();
 		
-		if (dir == Direction.N) {
-			this.travelTo(odometer.getX(), odometer.getY() + distance, true);
+		if (dir.equals(Direction.N)) {
+			this.travelY(currentX, currentY+distance, currentY);
 		}
-		else if (dir == Direction.E) {
-			this.travelTo(odometer.getX() + distance, odometer.getY(), false);
+		else if (dir.equals(Direction.E)) {
+			this.travelX(currentX+distance, currentY, currentX);
 		}
-		else if (dir == Direction.W) {
-			this.travelTo(odometer.getX(), odometer.getY() - distance, false);
+		else if (dir.equals(Direction.W)) {
+			this.travelX(currentX-distance, currentY, currentX);
 		}
-		else if  (dir == Direction.S) {
-			this.travelTo(odometer.getX() - distance, odometer.getY(), true);
+		else if  (dir.equals(Direction.S)) {
+			this.travelY(currentX, currentY-distance, currentY);
 		}
 		
 	}
@@ -345,12 +347,28 @@ public class Navigator {
 	 */
 	public void travelToMinAngle(double x, double y) {
 		double minAng;
+		
+	
 		while (Math.abs(x - odometer.getX()) > CM_ERR || Math.abs(y - odometer.getY()) > CM_ERR) {
+			
 			minAng = (Math.atan2(y - odometer.getY(), x - odometer.getX())) * (180.0 / Math.PI);
 			if (minAng < 0)
 				minAng += 360.0;
 			this.turnTo(minAng, false);
-			this.setSpeeds(SLOW, SLOW);
+			
+			if (headingCorrect) {
+				this.setSpeeds(0, 0);
+				headingCorrection(leftDistance, rightDistance);
+				headingCorrect = false;
+			}
+			
+			
+			if (setToSlow) {
+				this.setSpeeds(SLOW_LINE, SLOW_LINE);
+			}
+			else {
+				this.setSpeeds(FAST, FAST);
+			}
 		}
 		this.setSpeeds(0, 0);		// Why do we have this here?
 	}
@@ -393,21 +411,18 @@ public class Navigator {
 				
 				while (((y - odometer.getY()) > CM_ERR)) {
 					
+				
 					if (headingCorrect) {
 						this.setSpeeds(0, 0);
 						headingCorrection(leftDistance, rightDistance);
 						headingCorrect = false;
 					}
 					
-				
+					
 					if (setToSlow) {
-						if (reverse) {
-							this.setSpeeds(-SLOW_LINE, -SLOW_LINE);
-						}
-						else {
-							this.setSpeeds(SLOW_LINE, SLOW_LINE);
-						}
-					}else {
+						this.setSpeeds(SLOW_LINE, SLOW_LINE);
+					}
+					else {
 						this.setSpeeds(FAST, FAST);
 					}
 
@@ -439,13 +454,9 @@ public class Navigator {
 					}
 
 					if (setToSlow) {
-						if (reverse) {
-							this.setSpeeds(-SLOW_LINE, -SLOW_LINE);
-						}
-						else {
-							this.setSpeeds(SLOW_LINE, SLOW_LINE);
-						}
-					}else {
+						this.setSpeeds(SLOW_LINE, SLOW_LINE);
+					}
+					else {
 						this.setSpeeds(FAST, FAST);
 					}
 
@@ -484,13 +495,9 @@ public class Navigator {
 					}
 					
 					if (setToSlow) {
-						if (reverse) {
-							this.setSpeeds(-SLOW_LINE, -SLOW_LINE);
-						}
-						else {
-							this.setSpeeds(SLOW_LINE, SLOW_LINE);
-						}
-					}else {
+						this.setSpeeds(SLOW_LINE, SLOW_LINE);
+					}
+					else {
 						this.setSpeeds(FAST, FAST);
 					}
 
@@ -526,13 +533,9 @@ public class Navigator {
 						
 						
 						if (setToSlow) {
-							if (reverse) {
-								this.setSpeeds(-SLOW_LINE, -SLOW_LINE);
-							}
-							else {
-								this.setSpeeds(SLOW_LINE, SLOW_LINE);
-							}
-						}else {
+							this.setSpeeds(SLOW_LINE, SLOW_LINE);
+						}
+						else {
 							this.setSpeeds(FAST, FAST);
 						}
 

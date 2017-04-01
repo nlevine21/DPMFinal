@@ -206,7 +206,7 @@ public class OdometryCorrection extends Thread {
 			nav.setToSlow(false);
 			
 			try {
-				Thread.sleep(750);
+				Thread.sleep(800);
 			} catch (InterruptedException e) {
 				
 				return;
