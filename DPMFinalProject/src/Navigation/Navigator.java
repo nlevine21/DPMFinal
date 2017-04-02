@@ -128,6 +128,7 @@ public class Navigator {
 				
 				travelForward(33);
 				
+				
 				while (true) {
 					
 					if ((count % 2) != 0) {
@@ -137,8 +138,26 @@ public class Navigator {
 						turnRight(90);
 					}
 					
-					if(!isObstacle(middleUsSensor, SIDE_DETECTABLE_DISTANCE)) {
-						this.setSpeeds(0,0);
+					boolean obstacle = false;
+					
+					if(isObstacle(middleUsSensor, SIDE_DETECTABLE_DISTANCE)) {
+						obstacle = true;
+					}
+					
+					turnRight(15);
+					if(isObstacle(middleUsSensor, SIDE_DETECTABLE_DISTANCE)) {
+						obstacle = true;
+					}
+					
+					turnLeft(30);
+					if(isObstacle(middleUsSensor, SIDE_DETECTABLE_DISTANCE)) {
+						obstacle = true;
+					}
+					
+					turnRight(15);
+					
+					if (!obstacle) {
+						this.setSpeeds(0, 0);
 						return;
 					}
 					
@@ -153,8 +172,7 @@ public class Navigator {
 				}
 			}
 			else {
-				turnLeft(90);
-				turnLeft(90);
+				turnLeft(180);
 			}
 		}
 		

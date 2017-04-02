@@ -108,7 +108,7 @@ public class MainProgram {
 		
 		//goToDispenser(bx, by, -1, 7, nav);
 		
-		nav.travelTo(75, 75, false);
+		nav.travelTo(75, 75, true);
 		
 		/*
 		for (int i=0; i<1; i++) {
