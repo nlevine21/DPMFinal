@@ -27,15 +27,15 @@ public class Launcher {
 		// Constants
 		private static final int ACCELERATION = 6000;
 		private static final int LAUNCH_ANGLE5 = 230;
-		private static final int LAUNCH_ANGLE6 = 90;
-		private static final int LAUNCH_ANGLE7 = 80; // AMAZING
-		private static final int LAUNCH_ANGLE8 = 85; // OK
+		private static final int LAUNCH_ANGLE6 = 230;
+		private static final int LAUNCH_ANGLE7 = 230; // AMAZING
+		private static final int LAUNCH_ANGLE8 = 230; // OK
 		private static final int INITIAL_ANGLE = 30;	
-		private static final double FIVE_TILES = 3.8;
-		private static final double SIX_TILES = 8;
-		private static final double SEVEN_TILES = 8;
-		private static final double EIGHT_TILES = 8;
-		private static final int PRIME_ANGLE = 180;  // NEED TO CALCULATE THIS EXPERIMENTALLY. IT IS THE ANGLE TO MAKE ARM UP
+		private static final double FIVE_TILES = 3;
+		private static final double SIX_TILES = 3.2;
+		private static final double SEVEN_TILES = 3.8;
+		private static final double EIGHT_TILES = 4;
+		private static final int PRIME_ANGLE = 160;  // NEED TO CALCULATE THIS EXPERIMENTALLY. IT IS THE ANGLE TO MAKE ARM UP
 		
 		
 		/**
@@ -115,39 +115,12 @@ public class Launcher {
 				topMotor.setSpeed(((int)(100*tiles/8)*topMotor.getMaxSpeed())/100);
 				topMotor2.setSpeed(((int)((100*tiles/8)*topMotor.getMaxSpeed())/100));
 				
-			/*	// Set up tachometer values
-				
-			topMotor2.getTachoCount();
-			
-			
-				
-				// Set the motors to move
-				topMotor.backward();
-				topMotor2.backward();
-				
-				while (true) { 
-					
-					
-					
-					if (Math.abs(topMotor2.getPosition()) >= angle){
-						
-						Sound.buzz();
-						topMotor.flt(true);
-						topMotor2.flt(true);
-						Sound.buzz();
-						break;
-					}
-				}
-					*/
-				
-				
+
+
 				// Move motors and store current position
 				
-			
-				
-				
 				double Count1 = topMotor.getTachoCount();
-				double Count2 = topMotor.getTachoCount();
+				double Count2;
 				
 				
 				topMotor.backward();
@@ -160,33 +133,28 @@ public class Launcher {
 				
 				Sound.beep();
 				Count2 = topMotor.getTachoCount();
-				if ( (Math.abs( Count2) -  Math.abs(Count1) )<= angle){
+				if (Math.abs((Count2 -  Count1)) <= angle){
 					
-					
+					Sound.buzz();
 					topMotor.flt(true);
 					topMotor2.flt(true);
-					
-					
-					break;
-					
-					
-					
-				}}
 				
-					delay (5000);
-					
-					// Set return speed
-					
-					topMotor.setSpeed(100);
-					topMotor2.setSpeed(100);
+				}
+				break;
+				}
 				
-					// Bring arm back down
+					delay (6000);
 					
-					topMotor.forward();
-					topMotor2.forward();
+					topMotor.rotate(PRIME_ANGLE+110, true);
+					topMotor2.rotate(PRIME_ANGLE+90, false);
 					
 					
-				delay(3500);
+				delay(1500);
+				
+				topMotor.flt(true);
+				topMotor2.flt(true);
+				
+				delay(3000);
 
 
 						Sound.beepSequenceUp();

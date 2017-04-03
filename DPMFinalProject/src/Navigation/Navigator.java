@@ -109,6 +109,8 @@ public class Navigator {
 
 		
 		delay();
+		
+		
 		turnRight(90);
 		
 		int count = 0;
@@ -126,7 +128,7 @@ public class Navigator {
 			if (!blocked) {
 				delay();
 				
-				travelForward(33);
+				travelForward(28);
 				
 				
 				while (true) {
@@ -138,25 +140,7 @@ public class Navigator {
 						turnRight(90);
 					}
 					
-					boolean obstacle = false;
-					
-					if(isObstacle(middleUsSensor, SIDE_DETECTABLE_DISTANCE)) {
-						obstacle = true;
-					}
-					
-					turnRight(15);
-					if(isObstacle(middleUsSensor, SIDE_DETECTABLE_DISTANCE)) {
-						obstacle = true;
-					}
-					
-					turnLeft(30);
-					if(isObstacle(middleUsSensor, SIDE_DETECTABLE_DISTANCE)) {
-						obstacle = true;
-					}
-					
-					turnRight(15);
-					
-					if (!obstacle) {
+					if (!isObstacle(middleUsSensor, SIDE_DETECTABLE_DISTANCE)) {
 						this.setSpeeds(0, 0);
 						return;
 					}
@@ -168,7 +152,7 @@ public class Navigator {
 						turnLeft(90);
 					}
 					
-					travelForward(33);
+					travelForward(28);
 				}
 			}
 			else {

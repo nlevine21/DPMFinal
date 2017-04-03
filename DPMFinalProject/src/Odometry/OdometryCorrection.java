@@ -24,7 +24,7 @@ public class OdometryCorrection extends Thread {
 	private final double SENSOR_DIST = 5.2;
 	
 	private Navigator nav;
-	private int initialTileX, initialTileY;
+	private int initialTileX, initialTileY, corner;
 	
 	
 	private static final int COUNT = 8;
@@ -47,23 +47,35 @@ public class OdometryCorrection extends Thread {
 		this.leftColorSensor = leftColorSensor;
 		this.rightColorSensor = rightColorSensor;
 		this.nav = nav;
+		this.corner = corner;
+		
+		boolean [] update = {true, true, true};
+		double angle = 0;
 		
 		if (corner == 1) {
 			this.initialTileX = 0;
 			this.initialTileY = 0;
+			angle = 0;
 		}
 		else if (corner == 2) {
-			this.initialTileX = 0;
-			this.initialTileY = 11;
+			this.initialTileX = 11;
+			this.initialTileY = 0;
+			angle = 90;
 		}
 		else if (corner == 3) {
 			this.initialTileX = 11;
 			this.initialTileY = 11;
+			angle = 180;
 		}
 		else if (corner == 4) {
-			this.initialTileX = 11;
-			this.initialTileY = 0;
+			this.initialTileX = 0;
+			this.initialTileY = 11;
+			angle = 270;
 		}
+		
+		double position[] = {initialTileX*30.48 - 15, initialTileY*30.48 - 15, angle};
+		
+		odometer.setPosition(position, update);
 		
 		
 	}
@@ -84,15 +96,37 @@ public class OdometryCorrection extends Thread {
 		
 		double lastX = odometer.getX();
 		double lastY = odometer.getY();
-		Direction prevDirection = odometer.getDirection();
+		
+		Direction prevXDirection = Direction.E;
+		Direction prevYDirection = Direction.N;
+		
+		if (corner == 2) {
+			prevXDirection = Direction.W;
+		}
+		if (corner == 3) {
+			prevXDirection = Direction.W;
+			prevYDirection = Direction.S;
+		}
+		if (corner == 4) {
+			prevYDirection = Direction.S;
+		}
 		
 		while (true) {
 			
-			if(!(odometer.getDirection().equals(prevDirection))) {
-				lastX = odometer.getX();
-				lastY = odometer.getY();
-				prevDirection = odometer.getDirection();
+			if (!odometer.getDirection().equals(Direction.S) && !odometer.getDirection().equals(Direction.N)) {
+				if (!odometer.getDirection().equals(prevXDirection)) {
+					prevXDirection = odometer.getDirection();
+					lastX = odometer.getX();
+				}
 			}
+			
+			if (!odometer.getDirection().equals(Direction.E) && !odometer.getDirection().equals(Direction.W)) {
+				if (!odometer.getDirection().equals(prevYDirection)) {
+					prevYDirection = odometer.getDirection();
+					lastY = odometer.getY();
+				}
+			}
+			
 			
 			if (Math.abs(odometer.getX() - lastX) >= 32) {
 				

@@ -47,7 +47,7 @@ public class MainProgram {
 
 	
 
-	private static final int [] targetPosition = {5,6};
+	private static final int [] target= {5,10};
 	public static final double TILE_LENGTH = 30.48;
 	
 	// Constants
@@ -67,16 +67,14 @@ public class MainProgram {
 	public static void main(String[] args) {
 		
 		
-	/*
+
 		WiFiData data = new WiFiData();
 		if (data.offense || data.defense) {
 			Sound.beep();
 		}
-	*/
-		
 
 		
-		
+
 		backLightSensor.getRGBMode().fetchSample(backColorsIniti, 0);
 
 		
@@ -84,85 +82,54 @@ public class MainProgram {
 		LCDInfo lcd = new LCDInfo(odo);
 		Navigator nav = new Navigator(odo, middleUsSensor);
 		
-		int corner = 0;
-		OdometryCorrection odoCorrect = new OdometryCorrection(odo, leftLightSensor, rightLightSensor, nav, corner);
-
-	
 		 // perform the ultrasonic localization
-		  USLocalizer usl = new USLocalizer(odo, middleUsSensor, nav); 
-		  usl.doLocalization();
-	
-		  
-		  double[] position = {-15,-15,0}; boolean[] update = {true,true,true};
-		  odo.setPosition(position, update);
+		 USLocalizer usl = new USLocalizer(odo, middleUsSensor, nav); 
+		 usl.doLocalization();
 		  
 		  //start odometry correction
-		
+		int corner = data.corner;
+		OdometryCorrection odoCorrect = new OdometryCorrection(odo, leftLightSensor, rightLightSensor, nav, corner);
 		odoCorrect.start();
 		topMotor.stop(); topMotor2.stop();
 	
 		
-		int distance = 5;
-		Launcher launch = new Launcher(topMotor, topMotor2, distance);
-		int bx = 8; int by = 7;
-		
-		//goToDispenser(bx, by, -1, 7, nav);
-		
-		nav.travelTo(75, 75, true);
-		
-		/*
-		for (int i=0; i<1; i++) {
-			int bx = 4; int by = -1;
-			goToDispenser(bx, by, -1, 11, nav);
-			
-			middleUsSensor.disable();
-			
-			Sound.beep();
-			
-			try {
-				Thread.sleep(4000);
-			} catch (Exception e) {
-				
+		if (data.offense) {
+			if (data.corner == 3) {
+				nav.travelTo(10*TILE_LENGTH - 15, 15.24, true);
+			}
+			if (data.corner == 4) {
+				nav.travelTo(15.24, 15.24, true);
 			}
 			
-			nav.travelForward(10);
+			if (data.orientation.equals("S")) {
+				data.by = -1;
+			}
 			
-			int[] target = {7,1};
-			goToLaunchPoint(target[0], target[1], distance, nav);
-			launch.launchBall();
-		} */
-	
-		
-		
-		
-		
-		
-	
-	
-		  
-		  
-		 /* 
-		  
-		  if (demo) {
-			  
-			  double xPosition = targetPosition[0]*TILE_LENGTH;
-			  double yPosition = targetPosition[1]*TILE_LENGTH - lineDist*TILE_LENGTH - 0.5*TILE_LENGTH;
+			if (data.orientation.equals("W")) {
+				data.bx = -1;
+			}
 			
-			  nav.travelTo(xPosition - 10, yPosition);
-			  
-			  odoCorrect.interrupt();
-			  
-			  nav.delay();
-			  nav.travelTo(xPosition, yPosition);
-			  nav.turnTo(90,true);
-			  
+			if (data.orientation.equals("E")) {
+				data.bx = 11;
+			}
 			
+			while (true) {
+				goToDispenser(data.bx, data.by, -1, 11, nav);
+				goToLaunchPoint(target[0], target[1], data.d1, nav);
+				Launcher launch = new Launcher(topMotor, topMotor2, data.d1);
+				launch.launchBall();
+			}
+			
+		}
+		else if (data.defense) {
+			nav.travelTo(5*TILE_LENGTH, 9*TILE_LENGTH - data.w2*TILE_LENGTH, false);
+		}
 		
-			  Launcher launch = new Launcher(topMotor, topMotor2, lineDist);
-			  
-			  launch.launchBall();
-		  }
-		  */
+		
+
+		
+		
+	
 	}
 	
 	
@@ -198,33 +165,37 @@ public class MainProgram {
 		double xCm = bx*TILE_LENGTH;
 		double yCm = by*TILE_LENGTH;
 		
+		boolean xFirst; 
+		
 		if (bx == max) {
+			
+			xFirst = true;
+			
 			xCm -= TILE_LENGTH;
-			nav.travelTo(xCm - 15, yCm - 15, true);
-			nav.travelTo(xCm - 15, yCm, true);
-			nav.travelTo(xCm - 19, yCm, true);
-			nav.turnTo(150, true);
+			nav.travelTo(xCm - 10, yCm - 15, xFirst);
+			nav.travelTo(xCm - 10, yCm, xFirst);
+			nav.travelTo(xCm - 19, yCm, xFirst);
+			nav.turnTo(150, xFirst);
 		}
 		else if (bx == min) {
+			
+			xFirst = true;
+			
 			xCm += TILE_LENGTH;
-			nav.travelTo(xCm + 15, yCm - 15, true);
-			nav.travelTo(xCm + 15, yCm, true);
-			nav.travelTo(xCm + 19, yCm, true);
-			nav.turnTo(330, true);
-		}
-		else if (by == max) {
-			yCm -= TILE_LENGTH;
-			nav.travelTo(xCm - 15, yCm - 15, true);
-			nav.travelTo(xCm, yCm - 15, true);
-			nav.travelTo(xCm, yCm - 19, true);
-			nav.turnTo(240, true);
+			nav.travelTo(xCm + 10, yCm - 15, xFirst);
+			nav.travelTo(xCm + 10, yCm, xFirst);
+			nav.travelTo(xCm + 19, yCm, xFirst);
+			nav.turnTo(330, xFirst);
 		}
 		else if (by == min) {
+			
+			xFirst = false;
+			
 			yCm += TILE_LENGTH;
-			nav.travelTo(xCm - 15, yCm + 15, true);
-			nav.travelTo(xCm, yCm + 15, true);
-			nav.travelTo(xCm, yCm + 19, true);
-			nav.turnTo(60, true);
+			nav.travelTo(xCm - 15, yCm + 10, xFirst);
+			nav.travelTo(xCm, yCm + 10, xFirst);
+			nav.travelTo(xCm, yCm + 19, xFirst);
+			nav.turnTo(60, xFirst);
 		}
 		
 		
@@ -257,8 +228,8 @@ public class MainProgram {
 		double targetYCm = targetY * TILE_LENGTH;
 		double distanceCm = distance * TILE_LENGTH;
 	
-		nav.travelTo((targetXCm - distanceCm) - 8, targetYCm + 15, true);
-		nav.travelTo((targetXCm - distanceCm) - 8 , targetYCm, true);
+		nav.travelTo((targetXCm - distanceCm) - 8, targetYCm + 15, false);
+		nav.travelTo((targetXCm - distanceCm) - 8 , targetYCm, false);
 		nav.turnTo(330, true);
 		dispenserLocalize(nav);
 		
