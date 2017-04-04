@@ -30,7 +30,7 @@ public class Launcher {
 		private static final int LAUNCH_ANGLE6 = 230;
 		private static final int LAUNCH_ANGLE7 = 230; // AMAZING
 		private static final int LAUNCH_ANGLE8 = 230; // OK
-		private static final int INITIAL_ANGLE = 30;	
+		private static final int INITIAL_ANGLE = 10;	
 		private static final double FIVE_TILES = 3;
 		private static final double SIX_TILES = 3.2;
 		private static final double SEVEN_TILES = 3.8;
@@ -62,14 +62,15 @@ public class Launcher {
 		 */
 		public void launchBall() {
 			//Rotate the motors forward to prepare for launch
-	
+			topMotor.rotate(-INITIAL_ANGLE, true);
+			topMotor2.rotate(-INITIAL_ANGLE, false);
 			
 			
 			//Lock both of the top motors to prepare for the launch
 			topMotor.stop();
 			topMotor2.stop();
 			
-		
+			
 				
 				 if (TILES==5){
 						//Launch the ball
@@ -105,7 +106,7 @@ public class Launcher {
 		 */
 		private void launch(double tiles, double angle) {
 			
-
+				
 				
 				//Set the accelerations of the top motors
 				topMotor.setAcceleration(ACCELERATION); 

@@ -27,7 +27,7 @@ public class OdometryCorrection extends Thread {
 	private int initialTileX, initialTileY, corner;
 	
 	
-	private static final int COUNT = 8;
+	private static final int COUNT = 12;
 	
 
 	/**
@@ -163,6 +163,7 @@ public class OdometryCorrection extends Thread {
 			
 			if (isLineOnLeft() && !isLineOnRight()) {
 				int count;
+				Direction dir1 = odometer.getDirection();
 				
 				if (isFacingX()) {
 					leftDistance = odometer.getX();
@@ -189,10 +190,14 @@ public class OdometryCorrection extends Thread {
 				}
 				
 				if (count < COUNT) {
+					if (odometer.getDirection().equals(dir1)) {
+						
+					
 					nav.setHeadingCorrection(leftDistance, rightDistance, true);
 					updateTileAndOdometer(odometer.getDirection(), false);
 					lastX = odometer.getX();
 					lastY = odometer.getY();
+					}
 
 				}
 			}
@@ -200,6 +205,7 @@ public class OdometryCorrection extends Thread {
 			else if (!isLineOnLeft() && isLineOnRight()) {
 				
 				int count;
+				Direction dir1 = odometer.getDirection();
 				
 				if(isFacingX()) {
 					rightDistance = odometer.getX();
@@ -227,10 +233,14 @@ public class OdometryCorrection extends Thread {
 				}
 				
 					if (count < COUNT) {
+						
+						if (odometer.getDirection().equals(dir1)) {
+
 						nav.setHeadingCorrection(leftDistance, rightDistance, true);
 						updateTileAndOdometer(odometer.getDirection(), false);
 						lastX = odometer.getX();
 						lastY = odometer.getY();
+						}
 
 					}
 			}

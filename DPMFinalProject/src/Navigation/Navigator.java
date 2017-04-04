@@ -31,7 +31,7 @@ public class Navigator {
 	public final static int FAST = 150;
 	static final int SLOW = 100, SLOW_LINE = 50;
 	static final int ACCELERATION = 4000;
-	final static int FRONT_DETECTABLE_DISTANCE = 20, SIDE_DETECTABLE_DISTANCE = 40;
+	final static int FRONT_DETECTABLE_DISTANCE = 15, SIDE_DETECTABLE_DISTANCE = 40;
 	final static double DEG_ERR = 3.0, CM_ERR = .5;
 	private Odometer odometer;
 //	private Direction currentDirection1;
@@ -250,7 +250,7 @@ public class Navigator {
 	 * 
 	 */
 	public void reverseToDispenser() {
-		float deg = convertDistance(MainProgram.WHEEL_RADIUS, 15);
+		float deg = convertDistance(MainProgram.WHEEL_RADIUS, 11);
 		leftMotor.setSpeed(SLOW);
 		rightMotor.setSpeed(SLOW);
 		// System.out.println("forward");

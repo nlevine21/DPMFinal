@@ -47,15 +47,17 @@ public class MainProgram {
 
 	
 
-	private static final int [] target= {5,10};
+	private static final int [] target= {10,2};
 	public static final double TILE_LENGTH = 30.48;
 	
 	// Constants
 	public static final double WHEEL_RADIUS = 2.1;
 	public static final double TRACK = 14.65;
 	
+	
 	public static boolean demo = true;
 
+	private static int dispenserMin = -1, dispenserMax = 11;
 	
 	/**
 	 * Main Thread Method. Manages the sequence of events
@@ -87,12 +89,12 @@ public class MainProgram {
 		 usl.doLocalization();
 		  
 		  //start odometry correction
-		int corner = data.corner;
-		OdometryCorrection odoCorrect = new OdometryCorrection(odo, leftLightSensor, rightLightSensor, nav, corner);
+		OdometryCorrection odoCorrect = new OdometryCorrection(odo, leftLightSensor, rightLightSensor, nav, data.corner);
 		odoCorrect.start();
+		
 		topMotor.stop(); topMotor2.stop();
 	
-		
+	
 		if (data.offense) {
 			if (data.corner == 3) {
 				nav.travelTo(10*TILE_LENGTH - 15, 15.24, true);
@@ -114,7 +116,7 @@ public class MainProgram {
 			}
 			
 			while (true) {
-				goToDispenser(data.bx, data.by, -1, 11, nav);
+				goToDispenser(data.bx, data.by, dispenserMin, dispenserMax, nav);
 				goToLaunchPoint(target[0], target[1], data.d1, nav);
 				Launcher launch = new Launcher(topMotor, topMotor2, data.d1);
 				launch.launchBall();
@@ -122,12 +124,12 @@ public class MainProgram {
 			
 		}
 		else if (data.defense) {
-			nav.travelTo(5*TILE_LENGTH, 9*TILE_LENGTH - data.w2*TILE_LENGTH, false);
+			nav.travelTo(target[0]*TILE_LENGTH, (target[1]-1)*TILE_LENGTH - data.w2*TILE_LENGTH, false);
 		}
 		
 		
 
-		
+
 		
 	
 	}
@@ -198,7 +200,7 @@ public class MainProgram {
 			nav.turnTo(60, xFirst);
 		}
 		
-		
+		nav.setSpeeds(0, 0);
 		
 		topMotor.setAcceleration(100); 
 		topMotor2.setAcceleration(100);
@@ -206,16 +208,26 @@ public class MainProgram {
 		topMotor.setSpeed(100);
 		topMotor2.setSpeed(100);
 		
-		topMotor.rotate(135, true); topMotor2.rotate(135, false);
+		topMotor.rotate(160, true); topMotor2.rotate(160, false);
+		topMotor.flt(true); topMotor2.flt(true);
+		nav.delay();
+		nav.delay();
+		
+		topMotor.rotate(-25, true); topMotor2.rotate(-25, false);
 
+		nav.setSpeeds(0,0);
 		
 		dispenserLocalize(nav);
 		
 		nav.setSpeeds(0, 0);
 		
 		nav.reverseToDispenser();
-		
+		nav.setSpeeds(0, 0);		
 		topMotor.stop(); topMotor2.stop();
+		Sound.beep();
+		delay();
+		
+		
 		
 	
 	}
@@ -228,12 +240,18 @@ public class MainProgram {
 		double targetYCm = targetY * TILE_LENGTH;
 		double distanceCm = distance * TILE_LENGTH;
 	
-		nav.travelTo((targetXCm - distanceCm) - 8, targetYCm + 15, false);
-		nav.travelTo((targetXCm - distanceCm) - 8 , targetYCm, false);
+		nav.travelTo((targetXCm - distanceCm) + 15, targetYCm + 15, false);
+		nav.travelTo((targetXCm - distanceCm) + 15, targetYCm - 15, false);
+		nav.travelTo((targetXCm - distanceCm) - 8 , targetYCm, true);
 		nav.turnTo(330, true);
 		dispenserLocalize(nav);
 		
 	}
+	
+	public static void delay() {
+		Delay.msDelay(5000);
+	}
+	
 		
 
 
