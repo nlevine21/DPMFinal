@@ -12,7 +12,7 @@ public class WiFiData {
 	 * @version 1.0
 	 * @since 2017-03-24  	
 	 */
-	private static final String SERVER_IP = "192.168.2.6";
+	private static final String SERVER_IP = "192.168.2.11";
 	private static final int TEAM_NUMBER = 5;
 	private static final boolean ENABLE_DEBUG_WIFI_PRINT = true;
 	private Map wifiData;

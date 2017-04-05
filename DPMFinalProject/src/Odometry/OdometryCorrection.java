@@ -325,6 +325,9 @@ public class OdometryCorrection extends Thread {
 	 */
 	public void updateTileAndOdometer(Odometer.Direction dir, boolean missedTile) {
 		
+		leftColorSensor.getRGBMode().fetchSample(leftColorsIniti, 0);
+		rightColorSensor.getRGBMode().fetchSample(rightColorsIniti, 0);
+		
 		Sound.beepSequence();
 		double[] position = { 0, 0, 0 };
 		boolean[] update = { false, false, false };
@@ -376,6 +379,10 @@ public class OdometryCorrection extends Thread {
 			odometer.TILE[1] -= 1;
 			break;
 		}
+		
+		
+		
+		
 		
 	}
 	

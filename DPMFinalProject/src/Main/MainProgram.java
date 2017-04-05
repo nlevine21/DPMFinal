@@ -47,7 +47,7 @@ public class MainProgram {
 
 	
 
-	private static final int [] target= {10,2};
+	private static final int [] target= {5,10};
 	public static final double TILE_LENGTH = 30.48;
 	
 	// Constants
@@ -75,9 +75,11 @@ public class MainProgram {
 			Sound.beep();
 		}
 
-		
+		for (int i=0; i<50; i ++) {
+			
+			System.out.println();
+		}
 
-		backLightSensor.getRGBMode().fetchSample(backColorsIniti, 0);
 
 		
 		Odometer odo = new Odometer(leftMotor, rightMotor, 30, true);
@@ -87,6 +89,7 @@ public class MainProgram {
 		 // perform the ultrasonic localization
 		 USLocalizer usl = new USLocalizer(odo, middleUsSensor, nav); 
 		 usl.doLocalization();
+		 Sound.beep();
 		  
 		  //start odometry correction
 		OdometryCorrection odoCorrect = new OdometryCorrection(odo, leftLightSensor, rightLightSensor, nav, data.corner);
@@ -116,8 +119,8 @@ public class MainProgram {
 			}
 			
 			while (true) {
-				goToDispenser(data.bx, data.by, dispenserMin, dispenserMax, nav);
-				goToLaunchPoint(target[0], target[1], data.d1, nav);
+				goToDispenser(data.bx, data.by, dispenserMin, dispenserMax, nav, odo);
+				goToLaunchPoint(target[0], target[1], data.d1, nav, data.orientation, odo);
 				Launcher launch = new Launcher(topMotor, topMotor2, data.d1);
 				launch.launchBall();
 			}
@@ -136,6 +139,8 @@ public class MainProgram {
 	
 	
 	private static void dispenserLocalize(Navigator nav) {
+		
+		backLightSensor.getRGBMode().fetchSample(backColorsIniti, 0);
 		
 		while (!isLineOnBack()) {
 			nav.setSpeeds(-30, 30);
@@ -162,7 +167,8 @@ public class MainProgram {
 	 * 			
 	 *     	
 	 */
-	private static void goToDispenser(int bx, int by, int min, int max, Navigator nav) {
+	private static void goToDispenser(int bx, int by, int min, int max, Navigator nav, Odometer odometer) {
+		
 		
 		double xCm = bx*TILE_LENGTH;
 		double yCm = by*TILE_LENGTH;
@@ -174,32 +180,51 @@ public class MainProgram {
 			xFirst = true;
 			
 			xCm -= TILE_LENGTH;
-			nav.travelTo(xCm - 10, yCm - 15, xFirst);
-			nav.travelTo(xCm - 10, yCm, xFirst);
-			nav.travelTo(xCm - 19, yCm, xFirst);
+			nav.travelTo(xCm - 14, yCm - 15, xFirst);
+			nav.travelTo(odometer.getX(), yCm, xFirst);
+			nav.travelTo(xCm - 19, odometer.getY(), xFirst);
 			nav.turnTo(150, xFirst);
+			atDispenser(nav);
+			
+			nav.travelTo(xCm - 14, odometer.getY(), xFirst);
+			nav.travelTo(odometer.getX(), yCm + 15, xFirst);
 		}
 		else if (bx == min) {
 			
 			xFirst = true;
 			
 			xCm += TILE_LENGTH;
-			nav.travelTo(xCm + 10, yCm - 15, xFirst);
-			nav.travelTo(xCm + 10, yCm, xFirst);
-			nav.travelTo(xCm + 19, yCm, xFirst);
+			nav.travelTo(xCm + 14, yCm - 15, xFirst);
+			nav.travelTo(odometer.getX(), yCm, xFirst);
+			nav.travelTo(xCm + 19, odometer.getY(), xFirst);
 			nav.turnTo(330, xFirst);
+			atDispenser(nav);
+			
+			nav.travelTo(xCm + 14,  odometer.getY(), xFirst);
+			nav.travelTo(odometer.getX(), yCm + 15, xFirst);
 		}
 		else if (by == min) {
 			
 			xFirst = false;
 			
 			yCm += TILE_LENGTH;
-			nav.travelTo(xCm - 15, yCm + 10, xFirst);
-			nav.travelTo(xCm, yCm + 10, xFirst);
-			nav.travelTo(xCm, yCm + 19, xFirst);
+			nav.travelTo(xCm - 15, yCm + 14, xFirst);
+			nav.travelTo(xCm, odometer.getY(), xFirst);
+			nav.travelTo(odometer.getX(), yCm + 19, xFirst);
 			nav.turnTo(60, xFirst);
+			atDispenser(nav);
+			
+			nav.travelTo(odometer.getX(), yCm + 14, xFirst);
+			nav.travelTo(xCm + 15, odometer.getY(), xFirst);
 		}
 		
+		
+
+		
+	
+	}
+	
+	private static void atDispenser(Navigator nav) {
 		nav.setSpeeds(0, 0);
 		
 		topMotor.setAcceleration(100); 
@@ -213,7 +238,7 @@ public class MainProgram {
 		nav.delay();
 		nav.delay();
 		
-		topMotor.rotate(-25, true); topMotor2.rotate(-25, false);
+		topMotor.rotate(-20, true); topMotor2.rotate(-20, false);
 
 		nav.setSpeeds(0,0);
 		
@@ -227,12 +252,10 @@ public class MainProgram {
 		Sound.beep();
 		delay();
 		
-		
-		
-	
+		nav.turnOffSensor = true;
 	}
 	
-	private static void goToLaunchPoint (int targetX, int targetY, int distance, Navigator nav) {
+	private static void goToLaunchPoint (int targetX, int targetY, int distance, Navigator nav, String orientation, Odometer odometer) {
 		
 		nav.turnOffSensor = true;
 		
@@ -240,10 +263,20 @@ public class MainProgram {
 		double targetYCm = targetY * TILE_LENGTH;
 		double distanceCm = distance * TILE_LENGTH;
 	
-		nav.travelTo((targetXCm - distanceCm) + 15, targetYCm + 15, false);
-		nav.travelTo((targetXCm - distanceCm) + 15, targetYCm - 15, false);
-		nav.travelTo((targetXCm - distanceCm) - 8 , targetYCm, true);
-		nav.turnTo(330, true);
+		boolean xFirst = false;
+		if (orientation.toUpperCase().equals("S")) {
+			xFirst = true;
+		}
+			
+		nav.travelTo(targetXCm + 15, (targetYCm - distanceCm) - 12, xFirst);
+		nav.travelTo(targetXCm - 15, odometer.getY(), xFirst);
+		nav.travelTo(targetXCm, odometer.getY(), xFirst);
+		nav.travelTo(odometer.getX(), (targetYCm - distanceCm) - 8, xFirst);
+		
+	
+		nav.turnTo(60, true);
+		
+
 		dispenserLocalize(nav);
 		
 	}

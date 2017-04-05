@@ -30,7 +30,7 @@ public class Launcher {
 		private static final int LAUNCH_ANGLE6 = 230;
 		private static final int LAUNCH_ANGLE7 = 230; // AMAZING
 		private static final int LAUNCH_ANGLE8 = 230; // OK
-		private static final int INITIAL_ANGLE = 10;	
+		private static final int INITIAL_ANGLE = 15;	
 		private static final double FIVE_TILES = 3;
 		private static final double SIX_TILES = 3.2;
 		private static final double SEVEN_TILES = 3.8;
